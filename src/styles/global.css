@@ -448,6 +448,11 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 .demo-account small { font-size: 0.75rem; color: var(--muted); }
 .demo-account:disabled { opacity: 0.6; cursor: wait; }
 
+.import-card { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+.import-card > div { flex: 1 1 340px; display: grid; gap: 0.5rem; }
+.import-card h2 { font-size: var(--fs-base); margin: 0; }
+.import-card p { margin: 0; }
+
 /* ---------- 10. motion ---------- */
 /* the hero enters once on load */
 [data-enter] > * { animation: enter 700ms var(--ease) both; }

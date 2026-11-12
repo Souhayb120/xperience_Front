@@ -235,6 +235,7 @@ function CompanyHome() {
 
 // ---------- admin ----------
 function AdminHome() {
+  const [statsVersion, setStatsVersion] = useState(0)
   const pending = useLoad('/admin/companies?status=PENDING&size=1')
   const users = useLoad('/admin/users?size=1')
   const schools = useLoad('/admin/schools?size=1')
@@ -256,8 +257,47 @@ function AdminHome() {
           </section>
         ))}
       </div>
-      <AdminStats />
+      <ImportCard onImported={() => setStatsVersion((v) => v + 1)} />
+      <AdminStats key={statsVersion} />
     </div>
+  )
+}
+
+// runs the Dreamjob.ma import now (it also runs by itself every day at 06:00 when SCRAPER_ENABLED=true)
+function ImportCard({ onImported }) {
+  const [state, setState] = useState({ running: false, message: '', error: '' })
+
+  async function run() {
+    setState({ running: true, message: '', error: '' })
+    try {
+      const { read, added } = await api('/admin/scraper/run', { method: 'POST' })
+      setState({
+        running: false, error: '',
+        message: added > 0
+          ? `${added} nouvelle${added > 1 ? 's' : ''} offre${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''} (${read} lue${read > 1 ? 's' : ''}).`
+          : `Aucune nouvelle offre : les ${read} offres lues sont déjà dans Xperience.`,
+      })
+      if (added > 0) onImported()
+    } catch (e) {
+      setState({ running: false, message: '', error: e.message })
+    }
+  }
+
+  return (
+    <section className="card import-card" aria-labelledby="import-title">
+      <div>
+        <h2 id="import-title">Import automatique des offres</h2>
+        <p className="muted">
+          Chaque jour à 6 h, Xperience lit le flux public de Dreamjob.ma et ajoute les nouvelles offres
+          RH, finance, juridique, achats, marketing… Les offres déjà connues sont ignorées.
+        </p>
+        {state.message && <p className="alert alert-info" role="status">{state.message}</p>}
+        {state.error && <p className="alert alert-error" role="alert">{state.error}</p>}
+      </div>
+      <button className="btn btn-primary" onClick={run} disabled={state.running}>
+        {state.running ? 'Import en cours…' : "Lancer l'import maintenant"}
+      </button>
+    </section>
   )
 }
 

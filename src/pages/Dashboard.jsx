@@ -97,6 +97,7 @@ function SchoolHome() {
   }
 
   return (
+    <>
     <div className="dash-grid">
       <section className="card stack" style={{ textAlign: 'center' }} aria-labelledby="code-title">
         <h2 id="code-title" style={{ fontSize: 'var(--fs-xl)' }}>Le code de {school.name}</h2>
@@ -116,6 +117,74 @@ function SchoolHome() {
         </dl>
       </section>
     </div>
+    <SchoolStudents />
+    </>
+  )
+}
+
+// the students who joined with the school's code, each with their best offers
+function SchoolStudents() {
+  const { data, error } = useLoad('/school/students?size=50')
+  const [open, setOpen] = useState(null)        // id of the student whose offers are shown
+  const [matches, setMatches] = useState({})     // id -> list of matches
+
+  async function toggle(id) {
+    if (open === id) return setOpen(null)
+    setOpen(id)
+    if (!matches[id]) {
+      const result = await api(`/school/students/${id}/matches?size=5`)
+      setMatches((m) => ({ ...m, [id]: result.content }))
+    }
+  }
+
+  if (!data) return <div style={{ marginTop: '2rem' }}><Loading error={error} /></div>
+
+  return (
+    <section style={{ marginTop: '2.5rem' }} aria-labelledby="etudiants-title">
+      <h2 id="etudiants-title" style={{ fontSize: 'var(--fs-xl)' }}>
+        Vos étudiants <span className="muted">({data.page.totalElements})</span>
+      </h2>
+      {data.content.length === 0 && (
+        <div className="card empty">Aucun étudiant pour le moment. Partagez votre code pour qu'ils vous rejoignent.</div>
+      )}
+      <div className="job-list">
+        {data.content.map((student) => (
+          <article key={student.id} className="card stack">
+            <div className="row" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ margin: 0 }}>{student.fullName}</h3>
+                <p className="muted" style={{ margin: 0 }}>
+                  {[student.city, student.yearsExperience != null && `${student.yearsExperience} an(s) d'expérience`, student.email]
+                    .filter(Boolean).join(' · ')}
+                </p>
+              </div>
+              <div className="row">
+                {student.hasResume ? <span className="chip chip-brand">CV ajouté</span> : <span className="chip">Pas de CV</span>}
+                <button className="btn btn-ghost btn-sm" onClick={() => toggle(student.id)} aria-expanded={open === student.id}>
+                  {open === student.id ? 'Masquer ses offres' : 'Voir ses offres'}
+                </button>
+              </div>
+            </div>
+            {student.skills.length > 0 && (
+              <div className="row">{student.skills.map((s) => <span key={s} className="chip">{s}</span>)}</div>
+            )}
+            {open === student.id && (
+              <div className="stack">
+                {!matches[student.id] && <p className="muted">Chargement…</p>}
+                {matches[student.id]?.length === 0 && <p className="muted">Aucune offre ne correspond encore à son profil.</p>}
+                {matches[student.id]?.map(({ job, score }) => (
+                  <div key={job.id} className="mini-offer">
+                    <strong>{job.title}</strong>
+                    <small>{[job.company, job.city, job.contractType].filter(Boolean).join(' · ')}</small>
+                    <span className="score">{score} %</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 

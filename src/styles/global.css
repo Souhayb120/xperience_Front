@@ -176,7 +176,7 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
   .nav.open a { font-size: 1.15rem; padding: 0.6rem 0; }
   .nav.open .btn { width: 100%; }
 }
-.site-footer { border-top: 1px solid var(--line); padding: 2.5rem 0; color: var(--muted); font-size: var(--fs-sm); }
+.site-footer { background: transparent; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); padding: 1rem 0; color: var(--muted); font-size: 0.8rem; }
 .site-footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .site-footer nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
 .site-footer a { color: var(--muted); }
@@ -309,6 +309,36 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 @media (prefers-reduced-motion: reduce) {
   .ma-bar span { width: var(--score); }
   .ma-offer b { opacity: 1; }
+}
+
+/* ---------- sidebar (logged-in pages) ---------- */
+.app-shell { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100svh - var(--header-h)); }
+.app-main { min-width: 0; }
+.sidebar {
+  position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h));
+  display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
+  padding: 1.5rem 1rem; background: var(--surface); border-right: 1px solid var(--line);
+}
+.side-nav { display: grid; gap: 0.25rem; }
+.side-link {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.65rem 0.8rem; border-radius: 10px;
+  color: var(--ink); text-decoration: none; font-weight: 560;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease);
+}
+.side-link:hover { background: var(--surface-2); }
+.side-link.active { background: var(--brand-soft); color: var(--brand); }
+.side-icon { width: 20px; height: 20px; flex: none; }
+.side-user { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.7rem; align-items: center; padding-top: 1rem; border-top: 1px solid var(--line); }
+.side-user strong { display: block; font-size: var(--fs-sm); }
+.side-user small { color: var(--muted); }
+.side-user .btn { grid-column: 1 / -1; margin-top: 0.5rem; }
+.side-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--brand), var(--accent)); }
+@media (max-width: 860px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; flex-direction: row; padding: 0.5rem var(--gutter); border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .side-nav { grid-auto-flow: column; }
+  .side-link { white-space: nowrap; }
+  .side-user { display: none; }
 }
 
 /* ---------- 10. motion ---------- */

@@ -465,6 +465,15 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 .import-since .input { width: auto; min-height: 32px; padding: 0.3rem 0.5rem; }
 .import-panel .alert { margin: 0; }
 
+.source-tabs { display: flex; gap: 0.25rem; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
+.source-tab {
+  font: inherit; font-size: var(--fs-sm); font-weight: 600; color: var(--muted); cursor: pointer;
+  background: none; border: 0; border-bottom: 2px solid transparent; padding: 0.5rem 0.85rem; margin-bottom: -1px;
+}
+.source-tab:hover { color: var(--ink); }
+.source-tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+.import-hint { font-size: var(--fs-sm); margin: 0 0 1rem; }
+
 /* ---------- 10. motion ---------- */
 /* the hero enters once on load */
 [data-enter] > * { animation: enter 700ms var(--ease) both; }

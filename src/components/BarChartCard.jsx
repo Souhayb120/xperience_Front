@@ -35,7 +35,7 @@ const sum = (data) => data.reduce((n, d) => n + d.count, 0)
 export default function BarChartCard({ title, data }) {
   return (
     <ChartCard title={title} total={sum(data)} empty={data.length === 0}>
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
           <defs>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -47,9 +47,9 @@ export default function BarChartCard({ title, data }) {
                  tick={{ fontSize: 12 }} />
           <YAxis hide allowDecimals={false} />
           <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(15, 118, 110, 0.08)', radius: 10 }} />
-          <Bar dataKey="count" fill="url(#barGradient)" radius={[10, 10, 10, 10]} maxBarSize={44}
+          <Bar dataKey="count" fill="url(#barGradient)" radius={[10, 10, 10, 10]} maxBarSize={36}
                animationDuration={900}>
-            <LabelList dataKey="count" position="top" style={{ fontSize: 13, fontWeight: 700, fill: 'var(--ink)' }} />
+            <LabelList dataKey="count" position="top" style={{ fontSize: 12, fontWeight: 700, fill: 'var(--ink)' }} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -64,7 +64,7 @@ export function DonutChartCard({ title, data }) {
     <ChartCard title={title} total={total} empty={data.length === 0}>
       <div className="donut">
         <div className="donut-chart">
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={190}>
             <PieChart>
               <Pie data={data} dataKey="count" nameKey="label" innerRadius="62%" outerRadius="92%"
                    paddingAngle={3} cornerRadius={6} stroke="none" animationDuration={900}>

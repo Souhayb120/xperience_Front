@@ -250,7 +250,7 @@ function AdminHome() {
         {tiles.map(({ label, state }) => (
           <section key={label} className="card stack">
             <h2 style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>{label}</h2>
-            <p className="big-code" style={{ letterSpacing: 0, margin: 0 }}>
+            <p className="big-code" style={{ letterSpacing: 0, margin: 0, fontSize: '1.9rem' }}>
               {state.data ? state.data.page.totalElements : state.error ? '—' : '…'}
             </p>
           </section>

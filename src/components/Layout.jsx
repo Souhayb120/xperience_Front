@@ -26,7 +26,7 @@ export default function Layout() {
 
       <header className="site-header">
         <div className="wrap">
-          <Link to="/" className="logo" aria-label="Xperience, accueil">
+          <Link to={user ? '/espace' : '/'} className="logo" aria-label={user ? 'Xperience, mon espace' : 'Xperience, accueil'}>
             <LogoMark />
             Xperience
           </Link>

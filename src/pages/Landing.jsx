@@ -1,8 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 // The public home page. One idea per screen:
 // 1. what Xperience is  2. candidates  3. schools  4. companies  5. the last call to action
 export default function Landing() {
+  const { user, loading } = useAuth()
+  // logged-in users have their own home: the landing page is only for visitors
+  if (loading) return null
+  if (user) return <Navigate to="/espace" replace />
+
   return (
     <>
       {/* 1. hero: the candidate, with her offers floating over the photo */}

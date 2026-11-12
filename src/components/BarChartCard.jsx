@@ -3,7 +3,7 @@ import { Bar, BarChart, Cell, LabelList, Pie, PieChart, ResponsiveContainer, Too
 // The admin dashboard charts. data = [{ label, count }], biggest first.
 
 // Xperience chart colours: teal, lime, coral, ocean, amber... (SKILL _theme.md)
-const COLORS = ['#0f766e', '#c8f23c', '#fa6540', '#1e4f63', '#f5b52e', '#008388', '#7b47bf', '#e8902a', '#5fae7a', '#9db8b2']
+const COLORS = ['#0f5c56', '#a4c23e', '#e8704f', '#3a8f86', '#d9a441', '#1e4f63', '#7fb5a8', '#c98b6b', '#6d7f3a', '#a9bab4']
 
 // a dark tooltip card instead of the default white box
 function ChartTooltip({ active, payload }) {
@@ -39,8 +39,8 @@ export default function BarChartCard({ title, data }) {
         <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
           <defs>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#c8f23c" />
-              <stop offset="100%" stopColor="#0f766e" />
+              <stop offset="0%" stopColor="#3a8f86" />
+              <stop offset="100%" stopColor="#0f5c56" />
             </linearGradient>
           </defs>
           <XAxis dataKey="label" axisLine={false} tickLine={false} interval={0}

@@ -8,21 +8,21 @@
 :root {
   /* colours: the Xperience brand (SKILL _theme.md): deep teal for text and actions,
      lime only as a highlight (logo X, gradients, small badges), coral for eyebrow labels */
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #edf3f0;
-  --card: #f2f8f5;
+  --bg: #f1f4f2;
+  --surface: #fafbfa;
+  --surface-2: #e7ece9;
+  --card: #fafbfa;
   --ink: #002623;
   --muted: #48615e;
-  --line: rgb(5 62 59 / 0.14);
+  --line: rgb(5 62 59 / 0.11);
   --input-line: rgb(18 70 80 / 0.22);
   --brand: #053e3b;
   --brand-hover: #0a524e;
   --brand-ink: #f7faf2;
-  --brand-soft: #eaf2dd;
-  --accent: #c8f23c;
+  --brand-soft: #e0ebe7;
+  --accent: #a4c23e;
   --accent-ink: #05232e;
-  --accent-soft: #f3fbd9;
+  --accent-soft: #edf2dc;
   --coral: #fa6540;
   --ring: #008388;
   --dark: #032523;
@@ -32,7 +32,7 @@
   --danger-soft: #fdecea;
   --ok: #2a894b;
   --logo-ink: #063d3a;
-  --logo-x: #c6eb31;
+  --logo-x: #a4c23e;
 
   /* type */
   --font-display: "Bricolage Grotesque Variable", "Cairo", system-ui, sans-serif;
@@ -64,15 +64,15 @@
   --card: #072b28;
   --ink: #e6f2ee;
   --muted: #9db8b2;
-  --line: rgb(200 242 60 / 0.12);
+  --line: rgb(181 209 90 / 0.12);
   --input-line: rgb(230 242 238 / 0.2);
-  --brand: #c8f23c;
-  --brand-hover: #d8f86e;
+  --brand: #b5d15a;
+  --brand-hover: #c6dd7c;
   --brand-ink: #05232e;
-  --brand-soft: rgb(200 242 60 / 0.13);
-  --accent: #c8f23c;
+  --brand-soft: rgb(181 209 90 / 0.13);
+  --accent: #b5d15a;
   --accent-ink: #05232e;
-  --accent-soft: rgb(200 242 60 / 0.13);
+  --accent-soft: rgb(181 209 90 / 0.13);
   --coral: #ff8566;
   --ring: #3cc6c0;
   --dark: #021412;
@@ -184,7 +184,7 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
   background: var(--surface-2); color: var(--ink);
 }
 .chip-brand { background: var(--brand-soft); color: var(--brand); }
-.chip-warn { background: var(--accent-soft); color: var(--brand); border: 1px solid rgb(200 242 60 / 0.6); }
+.chip-warn { background: var(--accent-soft); color: var(--brand); border: 1px solid rgb(164 194 62 / 0.45); }
 .chip-danger { background: var(--danger-soft); color: var(--danger); }
 .job-list { display: grid; gap: 0.9rem; }
 .job-card { display: grid; gap: 0.6rem; }
@@ -399,7 +399,7 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 .chart-head h2 { font-size: var(--fs-lg); margin: 0; }
 .chart-total { font-size: var(--fs-sm); font-weight: 650; color: var(--brand); background: var(--brand-soft); padding: 0.2rem 0.65rem; border-radius: 999px; }
 .chart-tooltip { display: grid; gap: 0.15rem; background: #053e3b; color: #fff; padding: 0.55rem 0.8rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(15, 27, 45, 0.25); font-size: var(--fs-sm); }
-.chart-tooltip span { color: #c8f23c; }
+.chart-tooltip span { color: #c6dd7c; }
 .donut { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 1rem; }
 .donut-chart { position: relative; }
 .donut-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; }

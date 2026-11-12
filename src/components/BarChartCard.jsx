@@ -2,7 +2,8 @@ import { Bar, BarChart, Cell, LabelList, Pie, PieChart, ResponsiveContainer, Too
 
 // The admin dashboard charts. data = [{ label, count }], biggest first.
 
-const COLORS = ['#1f4fd1', '#ff7f50', '#14b8a6', '#7c5cff', '#f5b041', '#5aa9ff', '#e85d8a', '#22c1dc', '#8bc34a', '#a0aec0']
+// Xperience chart colours: teal, lime, coral, ocean, amber... (SKILL _theme.md)
+const COLORS = ['#0f766e', '#c8f23c', '#fa6540', '#1e4f63', '#f5b52e', '#008388', '#7b47bf', '#e8902a', '#5fae7a', '#9db8b2']
 
 // a dark tooltip card instead of the default white box
 function ChartTooltip({ active, payload }) {
@@ -38,14 +39,14 @@ export default function BarChartCard({ title, data }) {
         <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
           <defs>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#5aa9ff" />
-              <stop offset="100%" stopColor="#1f4fd1" />
+              <stop offset="0%" stopColor="#c8f23c" />
+              <stop offset="100%" stopColor="#0f766e" />
             </linearGradient>
           </defs>
           <XAxis dataKey="label" axisLine={false} tickLine={false} interval={0}
                  tick={{ fontSize: 12 }} />
           <YAxis hide allowDecimals={false} />
-          <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(31, 79, 209, 0.06)', radius: 10 }} />
+          <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(15, 118, 110, 0.08)', radius: 10 }} />
           <Bar dataKey="count" fill="url(#barGradient)" radius={[10, 10, 10, 10]} maxBarSize={44}
                animationDuration={900}>
             <LabelList dataKey="count" position="top" style={{ fontSize: 13, fontWeight: 700, fill: 'var(--ink)' }} />

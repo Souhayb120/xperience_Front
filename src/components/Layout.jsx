@@ -28,8 +28,7 @@ export default function Layout() {
       <header className="site-header">
         <div className="wrap">
           <Link to={user ? '/espace' : '/'} className="logo" aria-label={user ? 'Xperience, mon espace' : 'Xperience, accueil'}>
-            <LogoMark />
-            Xperience
+            <Logo />
           </Link>
 
           <ThemeToggle />
@@ -90,8 +89,6 @@ export default function Layout() {
   )
 }
 
-// the mark: a navy circle with a white arrow going up (career growth),
-// crossed by a coral stroke so the two together draw the "X" of Xperience
 const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/admin']
 
 // links by role: each one says where it goes
@@ -161,15 +158,20 @@ function Icon({ name }) {
   )
 }
 
-function LogoMark() {
+// The Xperience wordmark: a lime X whose top-right stroke becomes an upward arrow (growth),
+// then "perience" in heavy teal. Drawn in code because the logo PNG is not in the repo yet.
+function Logo() {
   return (
-    <svg className="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
-      <circle cx="16" cy="16" r="16" style={{ fill: 'var(--ink)' }} />
-      <path d="M10 22L22 10" style={{ stroke: 'var(--bg)' }} strokeWidth="3" strokeLinecap="round" />
-      <path d="M15.5 10H22v6.5" fill="none" style={{ stroke: 'var(--bg)' }} strokeWidth="3"
-            strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M10 10l3.6 3.6M18.4 18.4L22 22" stroke="var(--accent)" strokeWidth="3" strokeLinecap="round" />
-    </svg>
+    <>
+      <svg className="logo-x" viewBox="0 0 40 40" aria-hidden="true">
+        <g fill="none" stroke="var(--logo-x)" strokeWidth="7.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 34L30 8" />
+          <path d="M6 6l28 28" />
+          <path d="M18 5h14v14" />
+        </g>
+      </svg>
+      <span className="logo-word">perience</span>
+    </>
   )
 }
 

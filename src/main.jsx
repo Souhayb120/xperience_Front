@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import App from './App'
 import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/manrope'
 import './styles/global.css'
 
 createRoot(document.getElementById('root')).render(

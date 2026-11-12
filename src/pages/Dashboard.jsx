@@ -267,10 +267,10 @@ function AdminHome() {
 function ImportCard({ onImported }) {
   const [state, setState] = useState({ running: false, message: '', error: '' })
 
-  async function run() {
-    setState({ running: true, message: '', error: '' })
+  async function run(days) {
+    setState({ running: days, message: '', error: '' })
     try {
-      const { read, added } = await api('/admin/scraper/run', { method: 'POST' })
+      const { read, added } = await api(`/admin/scraper/run?days=${days}`, { method: 'POST' })
       setState({
         running: false, error: '',
         message: added > 0
@@ -289,14 +289,20 @@ function ImportCard({ onImported }) {
         <h2 id="import-title">Import automatique des offres</h2>
         <p className="muted">
           Chaque jour à 6 h, Xperience lit le flux public de Dreamjob.ma et ajoute les nouvelles offres
-          RH, finance, juridique, achats, marketing… Les offres déjà connues sont ignorées.
+          RH, finance, juridique, achats, marketing… Les offres déjà connues sont ignorées. Les 2 derniers mois sont importés des plus anciennes aux plus récentes.
         </p>
         {state.message && <p className="alert alert-info" role="status">{state.message}</p>}
         {state.error && <p className="alert alert-error" role="alert">{state.error}</p>}
       </div>
-      <button className="btn btn-primary" onClick={run} disabled={state.running}>
-        {state.running ? 'Import en cours…' : "Lancer l'import maintenant"}
-      </button>
+      <div className="row">
+        <button className="btn btn-primary" onClick={() => run(1)} disabled={Boolean(state.running)}>
+          {state.running === 1 ? 'Import en cours…' : 'Importer les offres du jour'}
+        </button>
+        <button className="btn btn-ghost" onClick={() => run(60)} disabled={Boolean(state.running)}
+                title="Environ 2 minutes : une page du flux toutes les 2 secondes">
+          {state.running === 60 ? 'Import des 2 mois… (≈ 2 min)' : 'Importer les 2 derniers mois'}
+        </button>
+      </div>
     </section>
   )
 }

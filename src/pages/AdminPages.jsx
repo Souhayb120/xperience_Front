@@ -225,7 +225,7 @@ export function AdminCompanies() {
 }
 
 // ---------- offers ----------
-const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
+const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', 'emploi-public': 'Emploi public', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
 const SORTS = [
   ['date-desc', 'Plus récentes'],
   ['date-asc', 'Plus anciennes'],
@@ -319,20 +319,23 @@ export function AdminJobs() {
   )
 }
 
-// imports the Dreamjob.ma offers of a chosen period, from the oldest to the newest
+// imports offers from a source: Dreamjob.ma for a chosen period (oldest to newest),
+// or the public-sector contests of emploi-public.ma that are still open
 function ImportPanel({ onImported }) {
   const today = new Date()
+  const [source, setSource] = useState('dreamjob')
   const [since, setSince] = useState(isoDay(new Date(today.getTime() - 6 * 86400000)))
   const [state, setState] = useState({ running: false, message: '', error: '' })
 
   // both dates at midnight UTC, so the difference is a whole number of days
   const days = Math.round((Date.parse(isoDay(today)) - Date.parse(since)) / 86400000) + 1
   const pickPeriod = (n) => setSince(isoDay(new Date(today.getTime() - (n - 1) * 86400000)))
+  const isDreamjob = source === 'dreamjob'
 
   async function run() {
     setState({ running: true, message: '', error: '' })
     try {
-      const { read, added } = await api(`/admin/scraper/run?days=${days}`, { method: 'POST' })
+      const { read, added } = await api(`/admin/scraper/run?source=${source}&days=${days}`, { method: 'POST' })
       setState({
         running: false, error: '',
         message: added > 0
@@ -348,23 +351,41 @@ function ImportPanel({ onImported }) {
   return (
     <section className="card import-panel" aria-labelledby="import-panel-title">
       <div className="import-panel-head">
-        <h2 id="import-panel-title">Importer des offres de Dreamjob.ma</h2>
-        <p className="muted">Choisissez la période : les offres sont ajoutées de la plus ancienne à la plus récente, sans doublons.</p>
+        <h2 id="import-panel-title">Importer des offres</h2>
+        <p className="muted">
+          {isDreamjob
+            ? 'Choisissez la période : les offres sont ajoutées de la plus ancienne à la plus récente, sans doublons.'
+            : 'Les concours de la fonction publique encore ouverts (date limite non passée), pour les fonctions support.'}
+        </p>
+      </div>
+      <div className="row" role="group" aria-label="Source">
+        {[['dreamjob', 'Dreamjob.ma'], ['emploi-public', 'Emploi public']].map(([value, label]) => (
+          <button key={value} type="button" className={`btn btn-sm ${source === value ? 'btn-primary' : 'btn-ghost'}`}
+                  aria-pressed={source === value} disabled={state.running}
+                  onClick={() => { setSource(value); setState({ running: false, message: '', error: '' }) }}>{label}</button>
+        ))}
       </div>
       <div className="import-panel-row">
-        <div className="row" role="group" aria-label="Période">
-          {PERIODS.map(([n, label]) => (
-            <button key={n} type="button" className={`btn btn-sm ${days === n ? 'btn-primary' : 'btn-ghost'}`}
-                    aria-pressed={days === n} onClick={() => pickPeriod(n)}>{label}</button>
-          ))}
-        </div>
-        <label className="import-since">
-          Depuis le
-          <input className="input" type="date" value={since} onChange={(e) => setSince(e.target.value)}
-                 min={isoDay(new Date(today.getTime() - (MAX_DAYS - 1) * 86400000))} max={isoDay(today)} />
-        </label>
-        <button className="btn btn-primary" onClick={run} disabled={state.running || days < 1 || days > MAX_DAYS}>
-          {state.running ? `Import en cours… (≈ ${Math.max(1, Math.round(days / 30))} min)` : `Importer ${days} jour${days > 1 ? 's' : ''}`}
+        {isDreamjob && (
+          <>
+            <div className="row" role="group" aria-label="Période">
+              {PERIODS.map(([n, label]) => (
+                <button key={n} type="button" className={`btn btn-sm ${days === n ? 'btn-primary' : 'btn-ghost'}`}
+                        aria-pressed={days === n} onClick={() => pickPeriod(n)}>{label}</button>
+              ))}
+            </div>
+            <label className="import-since">
+              Depuis le
+              <input className="input" type="date" value={since} onChange={(e) => setSince(e.target.value)}
+                     min={isoDay(new Date(today.getTime() - (MAX_DAYS - 1) * 86400000))} max={isoDay(today)} />
+            </label>
+          </>
+        )}
+        <button className="btn btn-primary" onClick={run}
+                disabled={state.running || (isDreamjob && (days < 1 || days > MAX_DAYS))}>
+          {state.running
+            ? 'Import en cours…'
+            : isDreamjob ? `Importer ${days} jour${days > 1 ? 's' : ''}` : 'Importer les concours ouverts'}
         </button>
       </div>
       {state.message && <p className="alert alert-info" role="status">{state.message}</p>}

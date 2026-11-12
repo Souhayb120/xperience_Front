@@ -112,7 +112,7 @@ const SIDEBAR_LINKS = {
     { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: 'user' },
     { to: '/admin/ecoles', label: 'Écoles', icon: 'school' },
     { to: '/admin/entreprises', label: 'Entreprises', icon: 'building' },
-    { to: '/offres', label: 'Toutes les offres', icon: 'list' },
+    { to: '/admin/offres', label: 'Offres', icon: 'briefcase' },
   ],
 }
 
@@ -149,6 +149,7 @@ function Icon({ name }) {
     user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-8 9a8 8 0 0 1 16 0',
     list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
     school: 'M2 9l10-5 10 5-10 5zM6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5',
+    briefcase: 'M3 8h18v12H3zM8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3M3 13h18',
     building: 'M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3',
   }
   return (

@@ -10,7 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Matches from './pages/Matches'
 import NotFound from './pages/NotFound'
-import { AdminCompanies, AdminSchools, AdminUsers } from './pages/AdminPages'
+import { AdminCompanies, AdminJobs, AdminSchools, AdminUsers } from './pages/AdminPages'
 
 // every page, in one place (French URLs: the site is in French)
 export default function App() {
@@ -35,6 +35,7 @@ export default function App() {
         <Route path="admin/utilisateurs" element={<RequireAuth><AdminUsers /></RequireAuth>} />
         <Route path="admin/ecoles" element={<RequireAuth><AdminSchools /></RequireAuth>} />
         <Route path="admin/entreprises" element={<RequireAuth><AdminCompanies /></RequireAuth>} />
+        <Route path="admin/offres" element={<RequireAuth><AdminJobs /></RequireAuth>} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

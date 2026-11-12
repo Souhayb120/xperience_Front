@@ -223,3 +223,152 @@ export function AdminCompanies() {
     </div>
   )
 }
+
+// ---------- offers ----------
+const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
+const SORTS = [
+  ['date-desc', 'Plus récentes'],
+  ['date-asc', 'Plus anciennes'],
+  ['title-asc', 'Titre A → Z'],
+  ['title-desc', 'Titre Z → A'],
+]
+const PERIODS = [[1, "Aujourd'hui"], [7, '7 jours'], [15, '15 jours'], [30, '1 mois'], [60, '2 mois']]
+const MAX_DAYS = 62
+const isoDay = (date) => date.toISOString().slice(0, 10)
+
+export function AdminJobs() {
+  const [search, setSearch] = useState('')
+  const [filters, setFilters] = useState({ q: '', city: '', category: '', source: '', sort: 'date-desc' })
+  const [choices, setChoices] = useState({ cities: [], categories: [], sources: [] })
+
+  const params = new URLSearchParams(Object.entries(filters).filter(([, v]) => v)).toString()
+  const { result, error, setError, page, setPage, reload } = usePagedList(`/admin/jobs?${params}`)
+
+  const loadChoices = useCallback(() => { api('/admin/jobs/filters').then(setChoices).catch(() => {}) }, [])
+  useEffect(() => { loadChoices() }, [loadChoices])
+
+  // the search box waits 300 ms after the last key before asking the server
+  useEffect(() => {
+    const timer = setTimeout(() => setFilters((f) => (f.q === search ? f : { ...f, q: search })), 300)
+    return () => clearTimeout(timer)
+  }, [search])
+  useEffect(() => { setPage(0) }, [params, setPage])
+
+  const setFilter = (e) => setFilters({ ...filters, [e.target.name]: e.target.value })
+  const reset = () => { setSearch(''); setFilters({ q: '', city: '', category: '', source: '', sort: 'date-desc' }) }
+
+  async function remove(job) {
+    if (!window.confirm(`Supprimer l'offre « ${job.title} » ?`)) return
+    try { await api(`/admin/jobs/${job.id}`, { method: 'DELETE' }); reload() } catch (e) { setError(e.message) }
+  }
+
+  return (
+    <div className="wrap page">
+      <div className="page-head">
+        <h1>Offres</h1>
+        <span className="muted">{result ? `${result.page.totalElements} offre(s)` : ''}</span>
+      </div>
+
+      <ImportPanel onImported={() => { reload(); loadChoices() }} />
+
+      <div className="card filters" role="search">
+        <input className="input" type="search" placeholder="Rechercher un titre ou une entreprise…"
+               aria-label="Rechercher" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <select className="select" name="city" aria-label="Ville" value={filters.city} onChange={setFilter}>
+          <option value="">Toutes les villes</option>
+          {choices.cities.map((c) => <option key={c}>{c}</option>)}
+        </select>
+        <select className="select" name="category" aria-label="Fonction" value={filters.category} onChange={setFilter}>
+          <option value="">Toutes les fonctions</option>
+          {choices.categories.map((c) => <option key={c}>{c}</option>)}
+        </select>
+        <select className="select" name="source" aria-label="Source" value={filters.source} onChange={setFilter}>
+          <option value="">Toutes les sources</option>
+          {choices.sources.map((s) => <option key={s} value={s}>{SOURCE_NAMES[s] ?? s}</option>)}
+        </select>
+        <select className="select" name="sort" aria-label="Trier" value={filters.sort} onChange={setFilter}>
+          {SORTS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+        </select>
+        <button className="btn btn-ghost btn-sm" onClick={reset}>Effacer</button>
+      </div>
+
+      {error && <p className="alert alert-error" role="alert">{error}</p>}
+      <div className="table-wrap card">
+        <table className="data-table">
+          <thead><tr><th>Offre</th><th>Ville</th><th>Fonction</th><th>Source</th><th>Publiée le</th><th /></tr></thead>
+          <tbody>
+            {result?.content.map((job) => (
+              <tr key={job.id}>
+                <td>
+                  {job.url ? <a href={job.url} target="_blank" rel="noopener noreferrer">{job.title}</a> : job.title}
+                  {(job.company || job.publisherName) && <><br /><small className="muted">{job.publisherName ?? job.company}</small></>}
+                </td>
+                <td>{job.city ?? <span className="muted">—</span>}</td>
+                <td>{job.category ?? <span className="muted">—</span>}</td>
+                <td><span className="chip">{SOURCE_NAMES[job.source] ?? job.source}</span></td>
+                <td>{job.postedAt ? new Date(job.postedAt).toLocaleDateString('fr-MA') : <span className="muted">—</span>}</td>
+                <td><button className="btn btn-ghost btn-sm" onClick={() => remove(job)}>Supprimer</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {result?.content.length === 0 && <p className="empty">Aucune offre ne correspond à ces filtres.</p>}
+      </div>
+      <Pager result={result} page={page} setPage={setPage} />
+    </div>
+  )
+}
+
+// imports the Dreamjob.ma offers of a chosen period, from the oldest to the newest
+function ImportPanel({ onImported }) {
+  const today = new Date()
+  const [since, setSince] = useState(isoDay(new Date(today.getTime() - 6 * 86400000)))
+  const [state, setState] = useState({ running: false, message: '', error: '' })
+
+  // both dates at midnight UTC, so the difference is a whole number of days
+  const days = Math.round((Date.parse(isoDay(today)) - Date.parse(since)) / 86400000) + 1
+  const pickPeriod = (n) => setSince(isoDay(new Date(today.getTime() - (n - 1) * 86400000)))
+
+  async function run() {
+    setState({ running: true, message: '', error: '' })
+    try {
+      const { read, added } = await api(`/admin/scraper/run?days=${days}`, { method: 'POST' })
+      setState({
+        running: false, error: '',
+        message: added > 0
+          ? `${added} nouvelle(s) offre(s) ajoutée(s) sur ${read} lue(s).`
+          : `Aucune nouvelle offre : les ${read} offres lues sont déjà dans Xperience.`,
+      })
+      if (added > 0) onImported()
+    } catch (e) {
+      setState({ running: false, message: '', error: e.message })
+    }
+  }
+
+  return (
+    <section className="card import-panel" aria-labelledby="import-panel-title">
+      <div className="import-panel-head">
+        <h2 id="import-panel-title">Importer des offres de Dreamjob.ma</h2>
+        <p className="muted">Choisissez la période : les offres sont ajoutées de la plus ancienne à la plus récente, sans doublons.</p>
+      </div>
+      <div className="import-panel-row">
+        <div className="row" role="group" aria-label="Période">
+          {PERIODS.map(([n, label]) => (
+            <button key={n} type="button" className={`btn btn-sm ${days === n ? 'btn-primary' : 'btn-ghost'}`}
+                    aria-pressed={days === n} onClick={() => pickPeriod(n)}>{label}</button>
+          ))}
+        </div>
+        <label className="import-since">
+          Depuis le
+          <input className="input" type="date" value={since} onChange={(e) => setSince(e.target.value)}
+                 min={isoDay(new Date(today.getTime() - (MAX_DAYS - 1) * 86400000))} max={isoDay(today)} />
+        </label>
+        <button className="btn btn-primary" onClick={run} disabled={state.running || days < 1 || days > MAX_DAYS}>
+          {state.running ? `Import en cours… (≈ ${Math.max(1, Math.round(days / 30))} min)` : `Importer ${days} jour${days > 1 ? 's' : ''}`}
+        </button>
+      </div>
+      {state.message && <p className="alert alert-info" role="status">{state.message}</p>}
+      {state.error && <p className="alert alert-error" role="alert">{state.error}</p>}
+    </section>
+  )
+}

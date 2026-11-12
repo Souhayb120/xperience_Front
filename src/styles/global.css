@@ -453,6 +453,18 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 .import-card h2 { font-size: var(--fs-base); margin: 0; }
 .import-card p { margin: 0; }
 
+/* admin offers: filters bar + import panel */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; }
+.filters .input[type="search"] { flex: 1 1 240px; }
+.filters .select { flex: 0 1 180px; width: auto; }
+.import-panel { display: grid; gap: 0.75rem; margin-bottom: 1rem; }
+.import-panel-head h2 { font-size: var(--fs-base); margin: 0 0 0.2rem; }
+.import-panel-head p { margin: 0; font-size: var(--fs-sm); }
+.import-panel-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.import-since { display: inline-flex; align-items: center; gap: 0.5rem; font-size: var(--fs-sm); font-weight: 600; }
+.import-since .input { width: auto; min-height: 32px; padding: 0.3rem 0.5rem; }
+.import-panel .alert { margin: 0; }
+
 /* ---------- 10. motion ---------- */
 /* the hero enters once on load */
 [data-enter] > * { animation: enter 700ms var(--ease) both; }

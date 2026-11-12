@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
-import BarChartCard from '../components/BarChartCard'
+import BarChartCard, { DonutChartCard } from '../components/BarChartCard'
 
 // "Mon espace": one home per role
 export default function Dashboard() {
@@ -270,7 +270,7 @@ function AdminStats() {
     <>
       <div className="grid-2" style={{ alignItems: 'start', gap: '1.5rem' }}>
         <BarChartCard title="Offres par ville" data={stats.offersByCity} />
-        <BarChartCard title="Offres par fonction" data={stats.offersByCategory} />
+        <DonutChartCard title="Offres par fonction" data={stats.offersByCategory} />
       </div>
 
       <section className="stack" aria-labelledby="latest-title">

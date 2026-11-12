@@ -16,6 +16,14 @@
     <title>Xperience — offres des fonctions support au Maroc</title>
   </head>
   <body>
+    <!-- apply the saved theme before the first paint (no white flash in dark mode) -->
+    <script>
+      try {
+        var t = localStorage.getItem('xperience.theme') ||
+          (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        document.documentElement.dataset.theme = t
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

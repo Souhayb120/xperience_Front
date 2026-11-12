@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
@@ -30,6 +31,8 @@ export default function Layout() {
             <LogoMark />
             Xperience
           </Link>
+
+          <ThemeToggle />
 
           <button
             type="button"
@@ -161,11 +164,72 @@ function Icon({ name }) {
 function LogoMark() {
   return (
     <svg className="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
-      <circle cx="16" cy="16" r="16" fill="var(--ink)" />
-      <path d="M10 22L22 10" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
-      <path d="M15.5 10H22v6.5" fill="none" stroke="#ffffff" strokeWidth="3"
+      <circle cx="16" cy="16" r="16" style={{ fill: 'var(--ink)' }} />
+      <path d="M10 22L22 10" style={{ stroke: 'var(--bg)' }} strokeWidth="3" strokeLinecap="round" />
+      <path d="M15.5 10H22v6.5" fill="none" style={{ stroke: 'var(--bg)' }} strokeWidth="3"
             strokeLinecap="round" strokeLinejoin="round" />
       <path d="M10 10l3.6 3.6M18.4 18.4L22 22" stroke="var(--accent)" strokeWidth="3" strokeLinecap="round" />
     </svg>
+  )
+}
+
+// Light / dark button. The switch is an "eclipse": going dark, the night grows out of the button
+// as a circle; going light, the night shrinks back into it.
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme ?? 'light')
+  const dark = theme === 'dark'
+
+  function toggle(event) {
+    const next = dark ? 'light' : 'dark'
+    const root = document.documentElement
+    const apply = () => {
+      root.dataset.theme = next
+      localStorage.setItem('xperience.theme', next)
+      flushSync(() => setTheme(next))
+    }
+    // old browsers and "reduce motion": switch at once
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      apply()
+      return
+    }
+
+    const { left, top, width, height } = event.currentTarget.getBoundingClientRect()
+    const x = left + width / 2
+    const y = top + height / 2
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+    const small = `circle(0px at ${x}px ${y}px)`
+    const big = `circle(${radius}px at ${x}px ${y}px)`
+
+    root.classList.toggle('to-light', next === 'light')
+    const transition = document.startViewTransition(apply)
+    transition.ready.then(() => {
+      root.animate(
+        { clipPath: next === 'dark' ? [small, big] : [big, small] },
+        {
+          duration: 700,
+          easing: 'cubic-bezier(0.7, 0, 0.25, 1)',
+          pseudoElement: next === 'dark' ? '::view-transition-new(root)' : '::view-transition-old(root)',
+          fill: 'forwards',
+        },
+      )
+    })
+    transition.finished.finally(() => root.classList.remove('to-light'))
+  }
+
+  return (
+    <button type="button" className="theme-toggle" onClick={toggle}
+            aria-label={dark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+            title={dark ? 'Mode clair' : 'Mode sombre'}>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <mask id="moon-mask">
+          <rect x="-4" y="-4" width="32" height="32" fill="#fff" />
+          <circle className="moon-cut" cx="26" cy="2" r="5.5" fill="#000" />
+        </mask>
+        <circle className="sun-core" cx="12" cy="12" r="5" fill="currentColor" mask="url(#moon-mask)" />
+        <g className="sun-rays" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" />
+        </g>
+      </svg>
+    </button>
   )
 }

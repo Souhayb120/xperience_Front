@@ -434,6 +434,20 @@ a.card:hover, .card-link:hover { transform: translateY(-2px); box-shadow: var(--
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 :root.to-light::view-transition-old(root) { z-index: 2; }
 
+.demo-accounts { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px dashed var(--line); }
+.demo-accounts h2 { font-size: var(--fs-sm); font-weight: 700; margin: 0 0 0.6rem; }
+.demo-accounts p { font-size: var(--fs-sm); margin: 0.6rem 0 0; }
+.demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+.demo-account {
+  display: grid; gap: 0.1rem; text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+  padding: 0.55rem 0.75rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface);
+  transition: border-color 0.15s, background 0.15s;
+}
+.demo-account:hover:not(:disabled) { border-color: var(--brand); background: var(--brand-soft); }
+.demo-account strong { font-size: var(--fs-sm); }
+.demo-account small { font-size: 0.75rem; color: var(--muted); }
+.demo-account:disabled { opacity: 0.6; cursor: wait; }
+
 /* ---------- 10. motion ---------- */
 /* the hero enters once on load */
 [data-enter] > * { animation: enter 700ms var(--ease) both; }

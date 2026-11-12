@@ -4,6 +4,16 @@ import { useAuth } from '../auth/AuthContext'
 import Field from '../components/Field'
 import AuthLayout from '../components/AuthLayout'
 
+// one test account per role (backend: DEMO_ACCOUNTS_ENABLED=true). Shown only in dev (npm run dev),
+// never in the production build: these passwords are public.
+const DEMO_PASSWORD = 'demo1234'
+const DEMO_ACCOUNTS = [
+  { role: 'Candidat', email: 'candidat@demo.ma', hint: 'CV, profil, mes offres' },
+  { role: 'École', email: 'ecole@demo.ma', hint: 'Code et étudiants' },
+  { role: 'Entreprise', email: 'entreprise@demo.ma', hint: 'Validée, publie des offres' },
+  { role: 'Admin', email: 'admin@demo.ma', hint: 'Utilisateurs, écoles, stats' },
+]
+
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -15,18 +25,22 @@ export default function Login() {
 
   const update = (event) => setForm({ ...form, [event.target.name]: event.target.value })
 
-  async function submit(event) {
-    event.preventDefault()
+  async function logIn(email, password) {
     setError('')
     setSending(true)
     try {
-      await login(form.email, form.password)
+      await login(email, password)
       navigate(location.state?.from ?? '/espace', { replace: true })
     } catch (e) {
       setError(e.message)
     } finally {
       setSending(false)
     }
+  }
+
+  function submit(event) {
+    event.preventDefault()
+    logIn(form.email, form.password)
   }
 
   return (
@@ -44,6 +58,22 @@ export default function Login() {
             {sending ? 'Connexion…' : 'Se connecter'}
           </button>
         </form>
+
+        {import.meta.env.DEV && (
+          <section className="demo-accounts" aria-labelledby="demo-title">
+            <h2 id="demo-title">Tester un rôle en un clic</h2>
+            <div className="demo-grid">
+              {DEMO_ACCOUNTS.map((account) => (
+                <button key={account.email} type="button" className="demo-account" disabled={sending}
+                        onClick={() => logIn(account.email, DEMO_PASSWORD)}>
+                  <strong>{account.role}</strong>
+                  <small>{account.hint}</small>
+                </button>
+              ))}
+            </div>
+            <p className="muted">Mot de passe de tous les comptes de test : <code>{DEMO_PASSWORD}</code></p>
+          </section>
+        )}
 
         <p className="muted" style={{ marginTop: '1.25rem', marginBottom: 0 }}>
           Pas encore de compte ? <Link to="/inscription">Créer un compte candidat</Link> ou{' '}

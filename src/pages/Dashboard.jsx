@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import BarChartCard from '../components/BarChartCard'
 
 // "Mon espace": one home per role
 export default function Dashboard() {
@@ -244,15 +245,61 @@ function AdminHome() {
     { label: 'Écoles', state: schools },
   ]
   return (
-    <div className="dash-grid">
-      {tiles.map(({ label, state }) => (
-        <section key={label} className="card stack">
-          <h2 style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>{label}</h2>
-          <p className="big-code" style={{ letterSpacing: 0, margin: 0 }}>
-            {state.data ? state.data.page.totalElements : state.error ? '—' : '…'}
-          </p>
-        </section>
-      ))}
+    <div className="stack" style={{ gap: '1.5rem' }}>
+      <div className="dash-grid">
+        {tiles.map(({ label, state }) => (
+          <section key={label} className="card stack">
+            <h2 style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>{label}</h2>
+            <p className="big-code" style={{ letterSpacing: 0, margin: 0 }}>
+              {state.data ? state.data.page.totalElements : state.error ? '—' : '…'}
+            </p>
+          </section>
+        ))}
+      </div>
+      <AdminStats />
     </div>
+  )
+}
+
+// charts of the visible offers + the newest candidates (GET /api/admin/stats)
+function AdminStats() {
+  const { data: stats, error } = useLoad('/admin/stats')
+  if (!stats) return <Loading error={error} />
+
+  return (
+    <>
+      <div className="grid-2" style={{ alignItems: 'start', gap: '1.5rem' }}>
+        <BarChartCard title="Offres par ville" data={stats.offersByCity} />
+        <BarChartCard title="Offres par fonction" data={stats.offersByCategory} />
+      </div>
+
+      <section className="stack" aria-labelledby="latest-title">
+        <div className="page-head" style={{ margin: 0 }}>
+          <h2 id="latest-title" style={{ fontSize: 'var(--fs-xl)', margin: 0 }}>Derniers candidats inscrits</h2>
+          <Link to="/admin/utilisateurs" className="btn btn-ghost btn-sm">Voir tous les utilisateurs</Link>
+        </div>
+        {stats.latestCandidates.length === 0 ? (
+          <p className="empty">Aucun candidat inscrit pour le moment.</p>
+        ) : (
+          <div className="table-wrap card">
+            <table className="data-table">
+              <thead><tr><th>Nom</th><th>Email</th><th>Ville</th><th>École</th><th>CV</th><th>Inscrit le</th></tr></thead>
+              <tbody>
+                {stats.latestCandidates.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.fullName}</td>
+                    <td>{c.email}</td>
+                    <td>{c.city ?? <span className="muted">—</span>}</td>
+                    <td>{c.schoolName ?? <span className="muted">—</span>}</td>
+                    <td><span className={`chip ${c.hasResume ? 'chip-brand' : ''}`}>{c.hasResume ? 'Oui' : 'Non'}</span></td>
+                    <td>{new Date(c.createdAt).toLocaleDateString('fr-MA')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </>
   )
 }

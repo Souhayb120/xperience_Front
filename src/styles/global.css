@@ -300,19 +300,19 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 /* ---------- login / sign-up: photo + animation left, form right ---------- */
 .auth-split { display: grid; grid-template-columns: 1.1fr 1fr; min-height: calc(100svh - var(--header-h)); }
 .auth-visual {
-  position: relative; overflow: hidden; display: grid; grid-template-rows: minmax(200px, 1fr) auto;
-  color: var(--dark-text); background: var(--dark);
+  position: relative; overflow: hidden; display: flex;
+  padding: 2.25rem clamp(1.25rem, 4vw, 3rem); color: var(--dark-text); background: var(--dark);
 }
-/* top: the photo, tinted teal to match the theme; bottom: the text and the matching animation */
-.auth-photo-wrap { position: relative; min-height: 0; }
-.auth-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 41%; }
-.auth-photo-wrap::after { content: ""; position: absolute; inset: 0; background: rgb(3 37 35 / 0.28); }
-.auth-visual-inner {
-  border-top: 3px solid var(--accent);
-  padding: clamp(1.1rem, 2.5vw, 1.75rem) clamp(1.25rem, 4vw, 3rem);
-}
+/* the photo fills the whole panel; one flat teal tint keeps the text readable and on-theme */
+.auth-photo-wrap { position: absolute; inset: 0; }
+.auth-photo { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; }
+.auth-photo-wrap::after { content: ""; position: absolute; inset: 0; background: rgb(3 37 35 / 0.62); }
+/* title at the top, animation at the bottom: her face stays visible in between */
+.auth-visual-inner { position: relative; z-index: 1; width: 100%; max-width: 560px; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
+.auth-visual-title, .auth-visual-text { text-shadow: 0 1px 2px rgb(0 0 0 / 0.35); }
+.auth-visual .ma-offer { background: rgb(3 37 35 / 0.78); }
 .auth-visual-title { font-size: clamp(1.55rem, 1.1rem + 1.2vw, 2.15rem); font-weight: 720; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 0.75rem; }
-.auth-visual-text { color: var(--dark-muted); margin: 0; }
+.auth-visual-text { color: #dbe7e3; margin: 0; }
 .auth-panel { display: grid; place-items: center; padding: 2.5rem var(--gutter); }
 .auth-form { width: min(100%, 440px); }
 .auth-form h1 { font-size: var(--fs-xl); }

@@ -10,10 +10,12 @@ export default function AuthLayout({ title, intro, children }) {
           <img className="auth-photo" src="/images/login.jpg" alt="" />
         </div>
         <div className="auth-visual-inner">
-          <p className="auth-visual-title">Votre CV rencontre les bonnes offres.</p>
-          <p className="auth-visual-text">
-            Xperience lit vos compétences et classe les offres RH, finance et juridique qui vous correspondent.
-          </p>
+          <div>
+            <p className="auth-visual-title">Votre CV rencontre les bonnes offres.</p>
+            <p className="auth-visual-text">
+              Xperience lit vos compétences et classe les offres RH, finance et juridique qui vous correspondent.
+            </p>
+          </div>
           <MatchAnimation />
         </div>
       </aside>

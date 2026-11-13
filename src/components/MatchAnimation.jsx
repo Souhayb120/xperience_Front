@@ -2,9 +2,9 @@
 // their scores fill up, and the best match lights up. Pure CSS + SVG, loops every 7s,
 // stops under "reduced motion" (see .match-anim in global.css).
 const OFFERS = [
-  { title: 'Chargé(e) de paie', place: 'Casablanca · CDI', score: 92, best: true },
-  { title: 'Responsable formation', place: 'Rabat · CDI', score: 64 },
-  { title: 'Contrôleur de gestion', place: 'Casablanca · CDI', score: 41 },
+  { title: 'Chargé(e) de paie', place: 'Casablanca, CDI', score: 92, best: true },
+  { title: 'Responsable formation', place: 'Rabat, CDI', score: 64 },
+  { title: 'Contrôleur de gestion', place: 'Casablanca, CDI', score: 41 },
 ]
 
 export default function MatchAnimation() {

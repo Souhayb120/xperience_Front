@@ -14,16 +14,15 @@ export default function Landing() {
       {/* 1. hero: the candidate, with her offers floating over the photo */}
       <section className="screen hero" aria-labelledby="hero-title">
         <div className="wrap grid-2">
-          <div data-enter>
-            <p className="eyebrow">Emploi des fonctions support au Maroc</p>
+          <div>
             <h1 id="hero-title">Les offres RH, finance et juridique qui vous ressemblent</h1>
             <p className="lead">
               Ajoutez votre CV : Xperience y trouve vos compétences et vous montre d'abord les offres
               qui y correspondent, dans votre ville. Vous postulez directement chez l'employeur.
             </p>
-            <div className="row">
+            <div className="row hero-actions">
               <Link to="/inscription" className="btn btn-primary">Ajouter mon CV</Link>
-              <Link to="/offres" className="btn btn-ghost">Voir les offres</Link>
+              <Link to="/offres" className="link">ou parcourir les offres sans compte</Link>
             </div>
           </div>
 
@@ -34,17 +33,17 @@ export default function Landing() {
             <div className="app-frame hero-float" aria-label="Aperçu de « Mes offres » dans Xperience">
               <div className="app-frame-bar">
                 <span /><span /><span />
-                <strong>Mes offres · Casablanca</strong>
+                <strong>Mes offres à Casablanca</strong>
               </div>
               <div className="app-frame-body">
                 <div className="mini-offer is-best">
                   <strong>Chargé(e) de paie</strong>
-                  <small>Cabinet RH · CDI</small>
+                  <small>Cabinet RH, CDI</small>
                   <span className="score">92 %</span>
                 </div>
                 <div className="mini-offer">
                   <strong>Contrôleur de gestion junior</strong>
-                  <small>Groupe industriel · CDI</small>
+                  <small>Groupe industriel, CDI</small>
                   <span className="score">81 %</span>
                 </div>
               </div>
@@ -60,7 +59,6 @@ export default function Landing() {
             <img src="/images/candidates.jpg" alt="Un groupe de jeunes regarde des offres sur un ordinateur portable" />
           </div>
           <div>
-            <p className="eyebrow">Candidats</p>
             <h2 id="candidats-title">Votre CV d'abord, les offres ensuite</h2>
             <ol className="steps" aria-label="Comment ça marche">
               <li className="step">
@@ -87,7 +85,6 @@ export default function Landing() {
       <section className="screen" aria-labelledby="ecoles-title">
         <div className="wrap grid-2">
           <div>
-            <p className="eyebrow">Écoles</p>
             <h2 id="ecoles-title">Un code pour suivre vos étudiants</h2>
             <p className="lead">
               Chaque école partenaire reçoit un code de 8 caractères. Les étudiants qui l'ajoutent à leur
@@ -109,7 +106,6 @@ export default function Landing() {
       <section className="screen screen-dark" aria-labelledby="entreprises-title">
         <div className="wrap grid-2">
           <div>
-            <p className="eyebrow">Entreprises</p>
             <h2 id="entreprises-title">Publiez vos offres auprès des bons profils</h2>
             <p className="lead">
               Inscrivez votre entreprise, notre équipe la valide, puis vous publiez vos offres avec votre
@@ -127,10 +123,7 @@ export default function Landing() {
       <section className="screen" aria-labelledby="close-title">
         <div className="wrap">
           <h2 id="close-title" className="close-title">Les offres des fonctions support, au même endroit</h2>
-          <div className="row">
-            <Link to="/inscription" className="btn btn-primary">Ajouter mon CV</Link>
-            <Link to="/offres" className="btn btn-ghost">Voir les offres</Link>
-          </div>
+          <Link to="/inscription" className="btn btn-primary">Créer mon compte et ajouter mon CV</Link>
         </div>
       </section>
     </>

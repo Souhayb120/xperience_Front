@@ -37,17 +37,11 @@ export default function BarChartCard({ title, data }) {
     <ChartCard title={title} total={sum(data)} empty={data.length === 0}>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
-          <defs>
-            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3a8f86" />
-              <stop offset="100%" stopColor="#0f5c56" />
-            </linearGradient>
-          </defs>
           <XAxis dataKey="label" axisLine={false} tickLine={false} interval={0}
                  tick={{ fontSize: 12 }} />
           <YAxis hide allowDecimals={false} />
           <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(15, 118, 110, 0.08)', radius: 10 }} />
-          <Bar dataKey="count" fill="url(#barGradient)" radius={[10, 10, 10, 10]} maxBarSize={36}
+          <Bar dataKey="count" fill="var(--brand)" radius={[10, 10, 10, 10]} maxBarSize={36}
                animationDuration={900}>
             <LabelList dataKey="count" position="top" style={{ fontSize: 12, fontWeight: 700, fill: 'var(--ink)' }} />
           </Bar>

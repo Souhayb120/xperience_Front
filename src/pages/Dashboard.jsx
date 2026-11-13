@@ -13,8 +13,8 @@ export default function Dashboard() {
     <div className="wrap page">
       <div className="page-head">
         <div>
-          <p className="eyebrow">{ROLE_LABELS[user.role]}</p>
           <h1>Bonjour {firstName}</h1>
+          <p className="muted" style={{ margin: 0 }}>{ROLE_LABELS[user.role]}</p>
         </div>
       </div>
 
@@ -156,7 +156,7 @@ function SchoolStudents() {
                 <h3 style={{ margin: 0 }}>{student.fullName}</h3>
                 <p className="muted" style={{ margin: 0 }}>
                   {[student.city, student.yearsExperience != null && `${student.yearsExperience} an(s) d'expérience`, student.email]
-                    .filter(Boolean).join(' · ')}
+                    .filter(Boolean).join(', ')}
                 </p>
               </div>
               <div className="row">
@@ -176,7 +176,7 @@ function SchoolStudents() {
                 {matches[student.id]?.map(({ job, score }) => (
                   <div key={job.id} className="mini-offer">
                     <strong>{job.title}</strong>
-                    <small>{[job.company, job.city, job.contractType].filter(Boolean).join(' · ')}</small>
+                    <small>{[job.company, job.city, job.contractType].filter(Boolean).join(', ')}</small>
                     <span className="score">{score} %</span>
                   </div>
                 ))}
@@ -219,7 +219,7 @@ function CompanyHome() {
         )}
         <dl className="kv">
           <dt>Ville</dt><dd>{company.city}</dd>
-          <dt>Site web</dt><dd>{company.website ?? '—'}</dd>
+          <dt>Site web</dt><dd>{company.website ?? 'Non renseigné'}</dd>
           <dt>Contact</dt><dd>{company.contactName}</dd>
         </dl>
       </section>
@@ -252,7 +252,7 @@ function AdminHome() {
           <section key={label} className="card stack">
             <h2 style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>{label}</h2>
             <p className="big-code" style={{ letterSpacing: 0, margin: 0, fontSize: '1.9rem' }}>
-              {state.data ? state.data.page.totalElements : state.error ? '—' : '…'}
+              {state.data ? state.data.page.totalElements : state.error ? 'n.c.' : '…'}
             </p>
           </section>
         ))}
@@ -335,8 +335,8 @@ function AdminStats() {
                   <tr key={c.id}>
                     <td>{c.fullName}</td>
                     <td>{c.email}</td>
-                    <td>{c.city ?? <span className="muted">—</span>}</td>
-                    <td>{c.schoolName ?? <span className="muted">—</span>}</td>
+                    <td>{c.city ?? <span className="muted">n.c.</span>}</td>
+                    <td>{c.schoolName ?? <span className="muted">n.c.</span>}</td>
                     <td><span className={`chip ${c.hasResume ? 'chip-brand' : ''}`}>{c.hasResume ? 'Oui' : 'Non'}</span></td>
                     <td>{new Date(c.createdAt).toLocaleDateString('fr-MA')}</td>
                   </tr>

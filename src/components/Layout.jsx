@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { BriefcaseBusiness, Building2, GraduationCap, House, List, Star, User } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
@@ -76,7 +77,7 @@ export default function Layout() {
 
       <footer className="site-footer">
         <div className="wrap">
-          <span>© {new Date().getFullYear()} Xperience — les fonctions support au Maroc</span>
+          <span>© {new Date().getFullYear()} Xperience, les fonctions support au Maroc</span>
           <span className="photo-credit">Photos : Unsplash</span>
           <nav aria-label="Liens du pied de page">
             <Link to="/offres">Offres</Link>
@@ -141,22 +142,15 @@ function Sidebar({ user, onLogout }) {
   )
 }
 
-// small line icons (stroke = current text colour)
+// sidebar icons from Lucide (one library, same stroke everywhere)
+const ICONS = {
+  home: House, star: Star, user: User, list: List,
+  school: GraduationCap, building: Building2, briefcase: BriefcaseBusiness,
+}
+
 function Icon({ name }) {
-  const paths = {
-    home: 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
-    star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
-    user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-8 9a8 8 0 0 1 16 0',
-    list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
-    school: 'M2 9l10-5 10 5-10 5zM6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5',
-    briefcase: 'M3 8h18v12H3zM8 8V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3M3 13h18',
-    building: 'M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3',
-  }
-  return (
-    <svg className="side-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d={paths[name]} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
+  const LucideIcon = ICONS[name]
+  return <LucideIcon className="side-icon" size={18} strokeWidth={2} aria-hidden="true" />
 }
 
 // The Xperience wordmark: a lime X whose top-right stroke becomes an upward arrow (growth),

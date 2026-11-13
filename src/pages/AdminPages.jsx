@@ -313,10 +313,10 @@ export function AdminJobs() {
                   {job.url ? <a href={job.url} target="_blank" rel="noopener noreferrer">{job.title}</a> : job.title}
                   {(job.company || job.publisherName) && <><br /><small className="muted">{job.publisherName ?? job.company}</small></>}
                 </td>
-                <td>{job.city ?? <span className="muted">—</span>}</td>
-                <td>{job.category ?? <span className="muted">—</span>}</td>
+                <td>{job.city ?? <span className="muted">n.c.</span>}</td>
+                <td>{job.category ?? <span className="muted">n.c.</span>}</td>
                 <td><span className="chip">{SOURCE_NAMES[job.source] ?? job.source}</span></td>
-                <td>{job.postedAt ? new Date(job.postedAt).toLocaleDateString('fr-MA') : <span className="muted">—</span>}</td>
+                <td>{job.postedAt ? new Date(job.postedAt).toLocaleDateString('fr-MA') : <span className="muted">n.c.</span>}</td>
                 <td><button className="btn btn-ghost btn-sm" onClick={() => remove(job)}>Supprimer</button></td>
               </tr>
             ))}

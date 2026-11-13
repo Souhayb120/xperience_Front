@@ -297,14 +297,20 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 }
 .photo-credit { font-size: 0.75rem; }
 
-/* ---------- login / sign-up: animation left, form right ---------- */
+/* ---------- login / sign-up: photo + animation left, form right ---------- */
 .auth-split { display: grid; grid-template-columns: 1.1fr 1fr; min-height: calc(100svh - var(--header-h)); }
 .auth-visual {
-  position: relative; overflow: hidden; display: flex; align-items: center; padding: 3rem clamp(1.5rem, 5vw, 4.5rem);
-  color: var(--dark-text);
-  background: var(--dark);
+  position: relative; overflow: hidden; display: grid; grid-template-rows: minmax(200px, 1fr) auto;
+  color: var(--dark-text); background: var(--dark);
 }
-.auth-visual-inner { width: 100%; max-width: 560px; }
+/* top: the photo, tinted teal to match the theme; bottom: the text and the matching animation */
+.auth-photo-wrap { position: relative; min-height: 0; }
+.auth-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 41%; }
+.auth-photo-wrap::after { content: ""; position: absolute; inset: 0; background: rgb(3 37 35 / 0.28); }
+.auth-visual-inner {
+  border-top: 3px solid var(--accent);
+  padding: clamp(1.1rem, 2.5vw, 1.75rem) clamp(1.25rem, 4vw, 3rem);
+}
 .auth-visual-title { font-size: clamp(1.55rem, 1.1rem + 1.2vw, 2.15rem); font-weight: 720; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 0.75rem; }
 .auth-visual-text { color: var(--dark-muted); margin: 0; }
 .auth-panel { display: grid; place-items: center; padding: 2.5rem var(--gutter); }

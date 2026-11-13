@@ -1,10 +1,14 @@
 import MatchAnimation from './MatchAnimation'
 
-// login / sign-up: the matching animation on the left, the form on the right
+// login / sign-up: a photo with the matching animation on the left, the form on the right
 export default function AuthLayout({ title, intro, children }) {
   return (
     <div className="auth-split">
       <aside className="auth-visual">
+        {/* Photo: Cedric Fauntleroy on Pexels (free licence) */}
+        <div className="auth-photo-wrap">
+          <img className="auth-photo" src="/images/login.jpg" alt="" />
+        </div>
         <div className="auth-visual-inner">
           <p className="auth-visual-title">Votre CV rencontre les bonnes offres.</p>
           <p className="auth-visual-text">

@@ -204,7 +204,7 @@ export function OfferList({ offers, error, hasFilters, onRetry, onClear, empty =
 function OfferRow({ job, score, matchingSkills = [], back }) {
   return (
     <li className="offer-row">
-      <CompanyLogo company={job.company} />
+      <CompanyLogo company={job.company} logoUrl={job.publisherLogoUrl} />
       <div className="offer-main">
         <Link to={`/offres/${job.id}`} state={{ back }} className="offer-title">{job.title}</Link>
         {job.company && <p className="offer-company">{job.company}</p>}
@@ -241,10 +241,20 @@ export function Pagination({ page, totalPages, onPage }) {
   )
 }
 
-// the company's initials ("Forvis Mazars" -> "FM", "ALTEN" -> "AL"); a briefcase when the offer has no company
-export function CompanyLogo({ company }) {
+// the company's logo when it uploaded one; otherwise its initials ("Forvis Mazars" -> "FM", "ALTEN" -> "AL");
+// a briefcase when the offer has no company
+export function CompanyLogo({ company, logoUrl }) {
+  const [broken, setBroken] = useState(false)   // the image did not load: show the initials instead
   const words = (company ?? '').split(/[\s\-&.]+/).filter(Boolean)
   const letters = words.length > 1 ? words[0][0] + words[1][0] : words[0]?.slice(0, 2)
+
+  if (logoUrl && !broken) {
+    return (
+      <span className="offer-logo has-image" aria-hidden="true">
+        <img src={logoUrl} alt="" loading="lazy" onError={() => setBroken(true)} />
+      </span>
+    )
+  }
   return (
     <span className="offer-logo" aria-hidden="true">
       {letters ? letters.toUpperCase() : <Briefcase size={18} />}

@@ -45,6 +45,7 @@ export default function Matches() {
           <h1>Mes offres</h1>
           <p className="muted" style={{ margin: 0 }}>
             Xperience lit votre CV, trouve vos compétences et vous montre les offres qui y correspondent.
+            Pour comparer le sens de votre CV et des offres, son texte est analysé par l'IA Gemini de Google.
           </p>
         </div>
       </div>

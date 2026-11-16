@@ -282,6 +282,10 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 .count-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .count-chip { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 36px; padding: 0.3rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: var(--fs-sm); font-weight: 600; text-decoration: none; transition: border-color 140ms var(--ease); }
 .count-chip span { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.landing-browse { padding: clamp(2.5rem, 6vh, 4rem) 0; border-top: 1px solid var(--line); }
+.landing-browse-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; margin-bottom: 1.25rem; }
+.landing-browse-head h2 { margin: 0; }
+.landing-browse-head .link { font-weight: 600; text-decoration: underline; text-underline-offset: 4px; background: none; }
 .chip-skel { width: 96px; height: 34px; border-radius: 999px; }
 @media (max-width: 860px) {
   .browse-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

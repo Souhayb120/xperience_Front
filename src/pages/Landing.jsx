@@ -1,8 +1,9 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { FunctionGrid, useJobCounts } from '../components/Browse'
 
 // The public home page. One idea per screen:
-// 1. what Xperience is  2. candidates  3. schools  4. companies  5. the last call to action
+// 1. what Xperience is (+ the offers by function)  2. candidates  3. schools  4. companies  5. the last call to action
 export default function Landing() {
   const { user, loading } = useAuth()
   // logged-in users have their own home: the landing page is only for visitors
@@ -51,6 +52,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <BrowseByFunction />
 
       {/* 2. candidates */}
       <section className="screen" aria-labelledby="candidats-title">
@@ -127,5 +130,24 @@ export default function Landing() {
         </div>
       </section>
     </>
+  )
+}
+
+// the offers by function, each card opens the filtered list (the full browse page is /metiers).
+// Hidden when the counts cannot be loaded: the rest of the page still works.
+function BrowseByFunction() {
+  const { counts, error } = useJobCounts()
+  if (error) return null
+
+  return (
+    <section className="landing-browse" aria-labelledby="fonctions-title">
+      <div className="wrap">
+        <div className="landing-browse-head">
+          <h2 id="fonctions-title">Emploi par fonction</h2>
+          <Link to="/metiers" className="link">Voir les villes et les contrats</Link>
+        </div>
+        <FunctionGrid items={counts?.categories} />
+      </div>
+    </section>
   )
 }

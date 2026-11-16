@@ -37,7 +37,7 @@ export default function Matches() {
     )
   }
 
-  const canMatch = profile.skills.length > 0
+  const canMatch = profile.hasResume || profile.skills.length > 0   // the whole CV is read, skills are a bonus
   return (
     <div className="wrap page">
       <div className="page-head">

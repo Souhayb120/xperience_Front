@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import RequireAuth from './components/RequireAuth'
 import Landing from './pages/Landing'
 import Jobs from './pages/Jobs'
+import JobDetail from './pages/JobDetail'
 import Login from './pages/Login'
 import RegisterCandidate from './pages/RegisterCandidate'
 import RegisterCompany from './pages/RegisterCompany'
@@ -19,6 +20,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Landing />} />
         <Route path="offres" element={<Jobs />} />
+        <Route path="offres/:id" element={<JobDetail />} />
         <Route path="connexion" element={<Login />} />
         <Route path="inscription" element={<RegisterCandidate />} />
         <Route path="inscription/entreprise" element={<RegisterCompany />} />

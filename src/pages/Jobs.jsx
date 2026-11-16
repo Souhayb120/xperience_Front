@@ -1,97 +1,70 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
-import JobCard from '../components/JobCard'
+import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery } from '../components/Offers'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 15
 
-// public list of offers: city filter + pages. The filter lives in the URL (?ville=Rabat&page=2)
-// so a filtered list can be shared or bookmarked.
+// public list of offers: search + filters on the right, newest first. Everything is in the URL (see useOfferQuery).
 export default function Jobs() {
-  const [params, setParams] = useSearchParams()
-  const city = params.get('ville') ?? ''
-  const page = Number(params.get('page') ?? 0)
+  const query = useOfferQuery()
+  const { backendQuery, page } = query
 
-  const [cityInput, setCityInput] = useState(city)
   const [result, setResult] = useState(null)
+  const [counts, setCounts] = useState(null)
   const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)   // "Réessayer" bumps it to load again
 
   useEffect(() => {
-    const query = new URLSearchParams({ page, size: PAGE_SIZE })
-    if (city) query.set('city', city)
-
+    let current = true   // ignore an old answer that arrives after a newer request
+    setResult(null)
     setError('')
-    api(`/jobs?${query}`)
-      .then(setResult)
-      .catch((e) => setError(e.message))
-  }, [city, page])
+    const params = new URLSearchParams(backendQuery)
+    params.set('page', page)
+    params.set('size', PAGE_SIZE)
+    api(`/jobs?${params}`)
+      .then((data) => current && setResult(data))
+      .catch((e) => current && setError(e.message))
+    return () => { current = false }
+  }, [backendQuery, page, attempt])
 
-  function search(event) {
-    event.preventDefault()
-    const next = {}
-    if (cityInput.trim()) next.ville = cityInput.trim()
-    setParams(next)
-  }
-
-  function goTo(nextPage) {
-    const next = Object.fromEntries(params)
-    next.page = String(nextPage)
-    setParams(next)
-    window.scrollTo({ top: 0 })
-  }
-
-  const jobs = result?.content ?? []
-  const totalPages = result?.page?.totalPages ?? 0
+  useEffect(() => {
+    let current = true
+    api(`/jobs/filters?${backendQuery}`)
+      .then((data) => current && setCounts(data))
+      .catch(() => {})   // the list already shows the error; the filters keep their last counts
+    return () => { current = false }
+  }, [backendQuery, attempt])
 
   return (
     <div className="wrap page">
-      <div className="page-head">
-        <div>
-          <h1>Offres d'emploi</h1>
-          <p className="muted" style={{ margin: 0 }}>
-            {result ? `${result.page.totalElements} offre(s)${city ? ` à ${city}` : ''}` : 'Chargement…'}
-          </p>
+      <OffersHeader
+        title="Offres d'emploi en fonctions support"
+        text="RH, finance, juridique, achats, IT, marketing et qualité, partout au Maroc. Mises à jour chaque jour."
+        q={query.q}
+        onSearch={(q) => query.update({ q })}
+      />
+
+      <div className="offers-layout">
+        <FilterPanel counts={counts} values={query.values} onChange={query.update} />
+
+        <div className="offers-results">
+          <ActiveFilters
+            total={result?.page.totalElements}
+            q={query.q}
+            values={query.values}
+            onChange={query.update}
+            onClear={query.clear}
+          />
+          <OfferList
+            offers={result?.content.map((job) => ({ job }))}
+            error={error}
+            hasFilters={query.hasFilters}
+            onRetry={() => setAttempt((n) => n + 1)}
+            onClear={query.clear}
+          />
+          <Pagination page={page} totalPages={result?.page.totalPages} onPage={query.goTo} />
         </div>
       </div>
-
-      <form className="filters" onSubmit={search} role="search">
-        <label htmlFor="ville" className="visually-hidden">Ville</label>
-        <input
-          id="ville"
-          className="input"
-          placeholder="Ville, par ex. Casablanca"
-          value={cityInput}
-          onChange={(e) => setCityInput(e.target.value)}
-        />
-        <button className="btn btn-primary" type="submit">Filtrer</button>
-        {city && (
-          <button className="btn btn-ghost" type="button" onClick={() => { setCityInput(''); setParams({}) }}>
-            Toutes les villes
-          </button>
-        )}
-      </form>
-
-      {error && <p className="alert alert-error" role="alert">{error}</p>}
-
-      {result && jobs.length === 0 && (
-        <div className="card empty">Aucune offre pour le moment{city ? ` à ${city}` : ''}.</div>
-      )}
-
-      <div className="job-list">
-        {jobs.map((job) => <JobCard key={job.id} job={job} />)}
-      </div>
-
-      {totalPages > 1 && (
-        <nav className="pager" aria-label="Pages">
-          <button className="btn btn-ghost btn-sm" disabled={page === 0} onClick={() => goTo(page - 1)}>
-            Page précédente
-          </button>
-          <span className="muted">Page {page + 1} sur {totalPages}</span>
-          <button className="btn btn-ghost btn-sm" disabled={page + 1 >= totalPages} onClick={() => goTo(page + 1)}>
-            Page suivante
-          </button>
-        </nav>
-      )}
     </div>
   )
 }

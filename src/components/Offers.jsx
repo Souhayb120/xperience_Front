@@ -15,7 +15,7 @@ export const FILTERS = [
   { key: 'secteur', api: 'sector', group: 'sectors', label: 'Secteur', all: 'Tous les secteurs' },
 ]
 const SECTOR_NAMES = { public: 'Secteur public', prive: 'Secteur privé' }
-const nameOf = (filter, value) => (filter.key === 'secteur' ? SECTOR_NAMES[value] ?? value : value)
+export const nameOf = (filter, value) => (filter.key === 'secteur' ? SECTOR_NAMES[value] ?? value : value)
 
 export function useOfferQuery() {
   const [params, setParams] = useSearchParams()

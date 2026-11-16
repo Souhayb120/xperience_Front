@@ -46,6 +46,7 @@ export default function Layout() {
 
           <nav id="menu" className={`nav${menuOpen ? ' open' : ''}`} aria-label="Navigation principale">
             <NavLink to="/offres">Offres</NavLink>
+            <NavLink to="/metiers">Métiers</NavLink>
             {user ? (
               <>
                 {user.role === 'CANDIDATE' && <NavLink to="/mes-offres">Mes offres</NavLink>}
@@ -81,6 +82,7 @@ export default function Layout() {
           <span className="photo-credit">Photos : Unsplash</span>
           <nav aria-label="Liens du pied de page">
             <Link to="/offres">Offres</Link>
+            <Link to="/metiers">Métiers</Link>
             <Link to="/inscription">Candidats</Link>
             <Link to="/inscription/entreprise">Entreprises</Link>
           </nav>

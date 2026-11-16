@@ -4,8 +4,9 @@ import { useAuth } from '../auth/AuthContext'
 import Field from '../components/Field'
 import AuthLayout from '../components/AuthLayout'
 
-// one test account per role (backend: DEMO_ACCOUNTS_ENABLED=true). Shown only in dev (npm run dev),
-// never in the production build: these passwords are public.
+// one test account per role (backend: DEMO_ACCOUNTS_ENABLED=true). Shown in dev (npm run dev), and online only
+// when VITE_DEMO_ACCOUNTS=true (Vercel setting): these passwords are public, anyone can use them.
+const SHOW_DEMO_ACCOUNTS = import.meta.env.DEV || import.meta.env.VITE_DEMO_ACCOUNTS === 'true'
 const DEMO_PASSWORD = 'demo1234'
 const DEMO_ACCOUNTS = [
   { role: 'Candidat', email: 'candidat@demo.ma', hint: 'CV, profil, mes offres' },

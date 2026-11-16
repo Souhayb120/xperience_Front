@@ -58,7 +58,7 @@ export default function Login() {
           </button>
         </form>
 
-        {import.meta.env.DEV && (
+        {SHOW_DEMO_ACCOUNTS && (
           <section className="demo-accounts" aria-labelledby="demo-title">
             <h2 id="demo-title">Tester un rôle en un clic</h2>
             <div className="demo-grid">

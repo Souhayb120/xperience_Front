@@ -40,7 +40,7 @@ export default function Login() {
 
   function submit(event) {
     event.preventDefault()
-    logIn(form.email, form.password)
+    void logIn(form.email, form.password)   // logIn() shows its own errors
   }
 
   return (

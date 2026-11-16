@@ -102,14 +102,14 @@ function ResumeCard({ profile, onUploaded }) {
   function drop(event) {
     event.preventDefault()
     setDragging(false)
-    upload(event.dataTransfer.files[0])
+    void upload(event.dataTransfer.files[0])   // upload() shows its own errors
   }
 
   const picker = (
     <label className={`btn ${profile.hasResume ? 'btn-ghost' : 'btn-primary'}`} style={{ cursor: uploading ? 'wait' : 'pointer' }}>
       {uploading ? 'Lecture du CV…' : profile.hasResume ? 'Remplacer mon CV' : 'Choisir mon CV (PDF)'}
       <input type="file" accept="application/pdf,.pdf" disabled={uploading} className="visually-hidden"
-             onChange={(e) => { upload(e.target.files[0]); e.target.value = '' }} />
+             onChange={(e) => { void upload(e.target.files[0]); e.target.value = '' }} />
     </label>
   )
 

@@ -210,8 +210,8 @@ function ThemeToggle() {
           fill: 'forwards',
         },
       )
-    })
-    transition.finished.finally(() => root.classList.remove('to-light'))
+    }).catch(() => {})   // the browser skipped the animation: the theme still changes
+    transition.finished.finally(() => root.classList.remove('to-light')).catch(() => {})
   }
 
   return (

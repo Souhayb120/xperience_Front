@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { BriefcaseBusiness, Building2, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
+import { BriefcaseBusiness, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
@@ -45,11 +45,16 @@ export default function Layout() {
           </button>
 
           <nav id="menu" className={`nav${menuOpen ? ' open' : ''}`} aria-label="Navigation principale">
-            <NavLink to="/offres">Offres</NavLink>
-            <NavLink to="/metiers">Métiers</NavLink>
             {user ? (
               <>
-                {user.role === 'CANDIDATE' && <NavLink to="/mes-offres">Mes offres</NavLink>}
+                {/* the offers are for candidates only */}
+                {user.role === 'CANDIDATE' && (
+                  <>
+                    <NavLink to="/offres">Offres</NavLink>
+                    <NavLink to="/metiers">Métiers</NavLink>
+                    <NavLink to="/mes-offres">Mes offres</NavLink>
+                  </>
+                )}
                 <NavLink to="/espace">Mon espace</NavLink>
                 <button type="button" className="btn btn-ghost btn-sm" onClick={handleLogout}>
                   Se déconnecter
@@ -81,10 +86,8 @@ export default function Layout() {
           <span>© {new Date().getFullYear()} Xperience, les fonctions support au Maroc</span>
           <span className="photo-credit">Photos : Unsplash</span>
           <nav aria-label="Liens du pied de page">
-            <Link to="/offres">Offres</Link>
-            <Link to="/metiers">Métiers</Link>
-            <Link to="/inscription">Candidats</Link>
-            <Link to="/inscription/entreprise">Entreprises</Link>
+            <Link to="/inscription">Créer un compte candidat</Link>
+            <Link to="/connexion">Se connecter</Link>
           </nav>
         </div>
       </footer>
@@ -92,7 +95,7 @@ export default function Layout() {
   )
 }
 
-const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/admin']
+const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/offres', '/metiers', '/admin']
 
 // links by role: each one says where it goes
 const SIDEBAR_LINKS = {
@@ -101,26 +104,21 @@ const SIDEBAR_LINKS = {
     { to: '/mes-offres', label: 'Mes offres', icon: 'star' },
     { to: '/profil', label: 'Mon profil et mon CV', icon: 'user' },
     { to: '/offres', label: 'Toutes les offres', icon: 'list' },
+    { to: '/metiers', label: 'Métiers', icon: 'briefcase' },
   ],
   SCHOOL: [
     { to: '/espace', label: 'Code et étudiants', icon: 'home' },
-    { to: '/offres', label: 'Toutes les offres', icon: 'list' },
-  ],
-  COMPANY: [
-    { to: '/espace', label: 'Mon entreprise', icon: 'home' },
-    { to: '/offres', label: 'Toutes les offres', icon: 'list' },
   ],
   ADMIN: [
     { to: '/espace', label: 'Tableau de bord', icon: 'home' },
     { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: 'user' },
     { to: '/admin/ecoles', label: 'Écoles', icon: 'school' },
-    { to: '/admin/entreprises', label: 'Entreprises', icon: 'building' },
     { to: '/admin/offres', label: 'Offres', icon: 'briefcase' },
     { to: '/admin/sites-carrieres', label: 'Sites carrières', icon: 'globe' },
   ],
 }
 
-const ROLE_NAMES = { CANDIDATE: 'Candidat', SCHOOL: 'École', COMPANY: 'Entreprise', ADMIN: 'Administrateur' }
+const ROLE_NAMES = { CANDIDATE: 'Candidat', SCHOOL: 'École', ADMIN: 'Administrateur' }
 
 function Sidebar({ user, onLogout }) {
   return (
@@ -148,7 +146,7 @@ function Sidebar({ user, onLogout }) {
 // sidebar icons from Lucide (one library, same stroke everywhere)
 const ICONS = {
   home: House, star: Star, user: User, list: List,
-  school: GraduationCap, building: Building2, briefcase: BriefcaseBusiness, globe: Globe,
+  school: GraduationCap, briefcase: BriefcaseBusiness, globe: Globe,
 }
 
 function Icon({ name }) {

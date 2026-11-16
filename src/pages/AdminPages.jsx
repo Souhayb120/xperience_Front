@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api } from '../api/client'
 import Field from '../components/Field'
 
-// The ADMIN pages: users, schools, companies. Each list loads a page of 20 from the API.
+// The ADMIN pages: users, schools, offers, career sites. Each list loads a page of 20 from the API.
 
 function usePagedList(path) {
   const [page, setPage] = useState(0)
@@ -30,7 +30,7 @@ function Pager({ result, page, setPage }) {
   )
 }
 
-const ROLE_NAMES = { CANDIDATE: 'Candidat', SCHOOL: 'École', COMPANY: 'Entreprise', ADMIN: 'Administrateur' }
+const ROLE_NAMES = { CANDIDATE: 'Candidat', SCHOOL: 'École', ADMIN: 'Administrateur' }
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString('fr-MA') : '')
 
 // ---------- users ----------
@@ -61,7 +61,7 @@ export function AdminUsers() {
                 <td><span className="chip">{ROLE_NAMES[user.role]}</span></td>
                 <td>{formatDate(user.createdAt)}</td>
                 <td>
-                  {/* schools and companies are deleted from their own page (with their data) */}
+                  {/* schools are deleted from their own page (with their data) */}
                   {user.role === 'CANDIDATE' && (
                     <button className="btn btn-ghost btn-sm" onClick={() => remove(user)}>Supprimer</button>
                   )}
@@ -161,71 +161,8 @@ export function AdminSchools() {
   )
 }
 
-// ---------- companies ----------
-const STATUS = {
-  PENDING: { label: 'En attente', chip: 'chip-warn' },
-  APPROVED: { label: 'Validée', chip: 'chip-brand' },
-  REJECTED: { label: 'Refusée', chip: 'chip-danger' },
-}
-
-export function AdminCompanies() {
-  const [status, setStatus] = useState('PENDING')
-  const { result, error, setError, page, setPage, reload } = usePagedList(
-    status ? `/admin/companies?status=${status}` : '/admin/companies')
-
-  async function act(company, action) {
-    try {
-      if (action === 'delete') {
-        if (!window.confirm(`Supprimer ${company.name}, son compte et toutes ses offres ?`)) return
-        await api(`/admin/companies/${company.id}`, { method: 'DELETE' })
-      } else {
-        await api(`/admin/companies/${company.id}/${action}`, { method: 'POST' })
-      }
-      reload()
-    } catch (e) { setError(e.message) }
-  }
-
-  return (
-    <div className="wrap page">
-      <div className="page-head">
-        <h1>Entreprises</h1>
-        <div className="row" role="group" aria-label="Filtrer par statut">
-          {[['PENDING', 'À valider'], ['APPROVED', 'Validées'], ['REJECTED', 'Refusées'], ['', 'Toutes']].map(([value, label]) => (
-            <button key={label} className={`btn btn-sm ${status === value ? 'btn-primary' : 'btn-ghost'}`}
-                    aria-pressed={status === value}
-                    onClick={() => { setStatus(value); setPage(0) }}>{label}</button>
-          ))}
-        </div>
-      </div>
-      {error && <p className="alert alert-error" role="alert">{error}</p>}
-      <div className="table-wrap card">
-        <table className="data-table">
-          <thead><tr><th>Entreprise</th><th>Ville</th><th>Contact</th><th>Statut</th><th /></tr></thead>
-          <tbody>
-            {result?.content.map((company) => (
-              <tr key={company.id}>
-                <td>{company.name}{company.website && <><br /><small><a href={company.website} target="_blank" rel="noopener noreferrer">{company.website}</a></small></>}</td>
-                <td>{company.city}</td>
-                <td>{company.contactName}<br /><small className="muted">{company.email}</small></td>
-                <td><span className={`chip ${STATUS[company.status].chip}`}>{STATUS[company.status].label}</span></td>
-                <td className="row" style={{ justifyContent: 'flex-end' }}>
-                  {company.status !== 'APPROVED' && <button className="btn btn-primary btn-sm" onClick={() => act(company, 'approve')}>Valider</button>}
-                  {company.status !== 'REJECTED' && <button className="btn btn-ghost btn-sm" onClick={() => act(company, 'reject')}>Refuser</button>}
-                  <button className="btn btn-ghost btn-sm" onClick={() => act(company, 'delete')}>Supprimer</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {result?.content.length === 0 && <p className="empty">Aucune entreprise dans cette liste.</p>}
-      </div>
-      <Pager result={result} page={page} setPage={setPage} />
-    </div>
-  )
-}
-
 // ---------- offers ----------
-const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', 'emploi-public': 'Emploi public', carriere: 'Carrières entreprises', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
+const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', 'emploi-public': 'Emploi public', carriere: 'Carrières entreprises', admin: 'Admin', seed: 'Exemple' }
 const SORTS = [
   ['date-desc', 'Plus récentes'],
   ['date-asc', 'Plus anciennes'],
@@ -311,7 +248,7 @@ export function AdminJobs() {
               <tr key={job.id}>
                 <td>
                   {job.url ? <a href={job.url} target="_blank" rel="noopener noreferrer">{job.title}</a> : job.title}
-                  {(job.company || job.publisherName) && <><br /><small className="muted">{job.publisherName ?? job.company}</small></>}
+                  {job.company && <><br /><small className="muted">{job.company}</small></>}
                 </td>
                 <td>{job.city ?? <span className="muted">n.c.</span>}</td>
                 <td>{job.category ?? <span className="muted">n.c.</span>}</td>

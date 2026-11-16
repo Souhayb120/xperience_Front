@@ -28,7 +28,7 @@ export default function JobDetail() {
       {job && (
         <article className="card offer-detail-card">
           <header className="offer-detail-head">
-            <CompanyLogo company={job.company} logoUrl={job.publisherLogoUrl} />
+            <CompanyLogo company={job.company} />
             <div>
               <h1>{job.title}</h1>
               {job.company && <p className="offer-company">{job.company}</p>}

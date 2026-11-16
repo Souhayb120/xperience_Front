@@ -3,7 +3,7 @@ import { useAuth } from '../auth/AuthContext'
 import { FunctionGrid, useJobCounts } from '../components/Browse'
 
 // The public home page. One idea per screen:
-// 1. what Xperience is (+ the offers by function)  2. candidates  3. schools  4. companies  5. the last call to action
+// 1. what Xperience is (+ the offers by function)  2. candidates  3. schools  4. the last call to action
 export default function Landing() {
   const { user, loading } = useAuth()
   // logged-in users have their own home: the landing page is only for visitors
@@ -23,7 +23,7 @@ export default function Landing() {
             </p>
             <div className="row hero-actions">
               <Link to="/inscription" className="btn btn-primary">Ajouter mon CV</Link>
-              <Link to="/offres" className="link">ou parcourir les offres sans compte</Link>
+              <Link to="/connexion" className="link">Déjà inscrit ? Se connecter</Link>
             </div>
           </div>
 
@@ -105,24 +105,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 4. companies */}
-      <section className="screen screen-dark" aria-labelledby="entreprises-title">
-        <div className="wrap grid-2">
-          <div>
-            <h2 id="entreprises-title">Publiez vos offres auprès des bons profils</h2>
-            <p className="lead">
-              Inscrivez votre entreprise, notre équipe la valide, puis vous publiez vos offres avec votre
-              lien ou votre email de candidature. Vous gardez la main sur chaque annonce.
-            </p>
-            <Link to="/inscription/entreprise" className="btn btn-primary">Inscrire mon entreprise</Link>
-          </div>
-          <div className="photo photo-wide">
-            <img src="/images/companies.jpg" alt="Deux collègues se tapent dans la main au bureau" />
-          </div>
-        </div>
-      </section>
-
-      {/* 5. close */}
+      {/* 4. close */}
       <section className="screen" aria-labelledby="close-title">
         <div className="wrap">
           <h2 id="close-title" className="close-title">Les offres des fonctions support, au même endroit</h2>

@@ -42,19 +42,14 @@ export function AuthProvider({ children }) {
     await signIn(token)
   }, [signIn])
 
-  const registerCompany = useCallback(async (form) => {
-    const { token } = await api('/auth/register/company', { method: 'POST', body: form })
-    await signIn(token)
-  }, [signIn])
-
   const logout = useCallback(() => {
     tokenStore.clear()
     setUser(null)
   }, [])
 
   const value = useMemo(
-    () => ({ user, loading, login, registerCandidate, registerCompany, logout, reload: loadMe }),
-    [user, loading, login, registerCandidate, registerCompany, logout, loadMe],
+    () => ({ user, loading, login, registerCandidate, logout, reload: loadMe }),
+    [user, loading, login, registerCandidate, logout, loadMe],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

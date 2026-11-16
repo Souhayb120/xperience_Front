@@ -10,7 +10,6 @@ const DEMO_PASSWORD = 'demo1234'
 const DEMO_ACCOUNTS = [
   { role: 'Candidat', email: 'candidat@demo.ma', hint: 'CV, profil, mes offres' },
   { role: 'École', email: 'ecole@demo.ma', hint: 'Code et étudiants' },
-  { role: 'Entreprise', email: 'entreprise@demo.ma', hint: 'Validée, publie des offres' },
   { role: 'Admin', email: 'admin@demo.ma', hint: 'Utilisateurs, écoles, stats' },
 ]
 
@@ -46,7 +45,7 @@ export default function Login() {
   return (
     <AuthLayout>
         <h1>Se connecter</h1>
-        <p className="muted">Candidats, écoles et entreprises : le même accès.</p>
+        <p className="muted">Candidats, écoles et administration : le même accès.</p>
 
         <form className="form" onSubmit={submit} noValidate>
           {error && <p className="alert alert-error" role="alert">{error}</p>}
@@ -76,8 +75,7 @@ export default function Login() {
         )}
 
         <p className="muted" style={{ marginTop: '1.25rem', marginBottom: 0 }}>
-          Pas encore de compte ? <Link to="/inscription">Créer un compte candidat</Link> ou{' '}
-          <Link to="/inscription/entreprise">inscrire une entreprise</Link>.
+          Pas encore de compte ? <Link to="/inscription">Créer un compte candidat</Link>.
         </p>
     </AuthLayout>
   )

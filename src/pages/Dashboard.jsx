@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import BarChartCard, { DonutChartCard } from '../components/BarChartCard'
-import { CompanyLogo } from '../components/Offers'
 
 // "Mon espace": one home per role
 export default function Dashboard() {
@@ -21,7 +20,6 @@ export default function Dashboard() {
 
       {user.role === 'CANDIDATE' && <CandidateHome />}
       {user.role === 'SCHOOL' && <SchoolHome />}
-      {user.role === 'COMPANY' && <CompanyHome />}
       {user.role === 'ADMIN' && <AdminHome />}
     </div>
   )
@@ -30,7 +28,6 @@ export default function Dashboard() {
 const ROLE_LABELS = {
   CANDIDATE: 'Espace candidat',
   SCHOOL: 'Espace école',
-  COMPANY: 'Espace entreprise',
   ADMIN: 'Administration',
 }
 
@@ -190,107 +187,13 @@ function SchoolStudents() {
   )
 }
 
-// ---------- company ----------
-const STATUS = {
-  PENDING: { label: 'En attente de validation', chip: 'chip-warn' },
-  APPROVED: { label: 'Validée', chip: 'chip-brand' },
-  REJECTED: { label: 'Refusée', chip: 'chip-danger' },
-}
-
-function CompanyHome() {
-  const { data: company, error } = useLoad('/company/me')
-  const { data: jobs } = useLoad('/company/jobs?size=1')
-  if (!company) return <Loading error={error} />
-
-  const status = STATUS[company.status]
-  return (
-    <div className="dash-grid">
-      <section className="card stack" aria-labelledby="entreprise-title">
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <h2 id="entreprise-title" style={{ fontSize: 'var(--fs-xl)', margin: 0 }}>{company.name}</h2>
-          <span className={`chip ${status.chip}`}>{status.label}</span>
-        </div>
-        {company.status === 'PENDING' && (
-          <p className="alert alert-info">
-            Notre équipe vérifie votre entreprise. Vous pourrez publier vos offres dès qu'elle sera validée.
-          </p>
-        )}
-        {company.status === 'REJECTED' && (
-          <p className="alert alert-error">Votre entreprise n'a pas été validée. Contactez l'équipe Xperience.</p>
-        )}
-        <LogoForm company={company} />
-        <dl className="kv">
-          <dt>Ville</dt><dd>{company.city}</dd>
-          <dt>Site web</dt><dd>{company.website ?? 'Non renseigné'}</dd>
-          <dt>Contact</dt><dd>{company.contactName}</dd>
-        </dl>
-      </section>
-
-      <section className="card stack" aria-labelledby="mes-offres-title">
-        <h2 id="mes-offres-title" style={{ fontSize: 'var(--fs-xl)' }}>Mes offres</h2>
-        <p className="big-code" style={{ letterSpacing: 0 }}>{jobs ? jobs.page.totalElements : '…'}</p>
-        <p className="muted">offre(s) publiée(s)</p>
-      </section>
-    </div>
-  )
-}
-
-// the company's logo, shown next to its offers. PNG, JPEG or WebP, 1 MB max (checked again by the backend)
-function LogoForm({ company }) {
-  const [logoUrl, setLogoUrl] = useState(company.logoUrl)
-  const [message, setMessage] = useState(null)
-  const [uploading, setUploading] = useState(false)
-
-  async function upload(event) {
-    const file = event.target.files[0]
-    event.target.value = ''
-    if (!file) return
-    if (file.size > 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Le logo ne doit pas dépasser 1 Mo' })
-      return
-    }
-    setMessage(null)
-    setUploading(true)
-    try {
-      const data = new FormData()
-      data.append('file', file)
-      const updated = await api('/company/me/logo', { method: 'POST', body: data })
-      setLogoUrl(updated.logoUrl)
-      setMessage({ type: 'ok', text: 'Logo enregistré. Il apparaît maintenant sur vos offres.' })
-    } catch (e) {
-      setMessage({ type: 'error', text: e.message })
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  return (
-    <div className="logo-form">
-      <CompanyLogo company={company.name} logoUrl={logoUrl} />
-      <div>
-        <label className="btn btn-ghost btn-sm" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
-          {uploading ? 'Envoi du logo…' : logoUrl ? 'Changer le logo' : 'Ajouter un logo'}
-          <input type="file" accept="image/png,image/jpeg,image/webp" onChange={upload} disabled={uploading}
-                 className="visually-hidden" />
-        </label>
-        <p className="hint muted">PNG, JPEG ou WebP, 1 Mo maximum.</p>
-      </div>
-      {message && (
-        <p className={`alert ${message.type === 'ok' ? 'alert-info' : 'alert-error'}`} role="status">{message.text}</p>
-      )}
-    </div>
-  )
-}
-
 // ---------- admin ----------
 function AdminHome() {
   const [statsVersion, setStatsVersion] = useState(0)
-  const pending = useLoad('/admin/companies?status=PENDING&size=1')
   const users = useLoad('/admin/users?size=1')
   const schools = useLoad('/admin/schools?size=1')
 
   const tiles = [
-    { label: 'Entreprises à valider', state: pending },
     { label: 'Utilisateurs', state: users },
     { label: 'Écoles', state: schools },
   ]

@@ -327,11 +327,6 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 .offer-row:hover { background: var(--bg); }
 .offer-row:focus-within { outline: 3px solid var(--ring); outline-offset: -3px; }
 .offer-logo { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--brand-soft); color: var(--brand); font-size: var(--fs-sm); font-weight: 750; }
-.offer-logo.has-image { padding: 3px; background: #fff; }
-.offer-logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 3px; }
-.logo-form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
-.logo-form .hint { margin: 0.35rem 0 0; font-size: var(--fs-sm); }
-.logo-form .alert { flex-basis: 100%; margin: 0; }
 .btn:has(input:focus-visible) { outline: 3px solid var(--ring); outline-offset: 2px; }
 .offer-title { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 700; line-height: 1.3; color: var(--ink); text-decoration: none; }
 .offer-title::after { content: ""; position: absolute; inset: 0; }

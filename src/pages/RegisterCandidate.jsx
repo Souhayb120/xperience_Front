@@ -69,8 +69,7 @@ export default function RegisterCandidate() {
         </form>
 
         <p className="muted" style={{ marginTop: '1.25rem', marginBottom: 0 }}>
-          Déjà inscrit ? <Link to="/connexion">Se connecter</Link>. Vous recrutez ?{' '}
-          <Link to="/inscription/entreprise">Inscrire votre entreprise</Link>.
+          Déjà inscrit ? <Link to="/connexion">Se connecter</Link>.
         </p>
     </AuthLayout>
   )

@@ -7,12 +7,11 @@ import JobDetail from './pages/JobDetail'
 import Browse from './pages/Browse'
 import Login from './pages/Login'
 import RegisterCandidate from './pages/RegisterCandidate'
-import RegisterCompany from './pages/RegisterCompany'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Matches from './pages/Matches'
 import NotFound from './pages/NotFound'
-import { AdminCareerSites, AdminCompanies, AdminJobs, AdminSchools, AdminUsers } from './pages/AdminPages'
+import { AdminCareerSites, AdminJobs, AdminSchools, AdminUsers } from './pages/AdminPages'
 
 // every page, in one place (French URLs: the site is in French)
 export default function App() {
@@ -20,12 +19,12 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Landing />} />
-        <Route path="offres" element={<Jobs />} />
-        <Route path="offres/:id" element={<JobDetail />} />
-        <Route path="metiers" element={<Browse />} />
+        {/* the offers are for candidates only (the home page shows their counts) */}
+        <Route path="offres" element={<RequireAuth role="CANDIDATE"><Jobs /></RequireAuth>} />
+        <Route path="offres/:id" element={<RequireAuth role="CANDIDATE"><JobDetail /></RequireAuth>} />
+        <Route path="metiers" element={<RequireAuth role="CANDIDATE"><Browse /></RequireAuth>} />
         <Route path="connexion" element={<Login />} />
         <Route path="inscription" element={<RegisterCandidate />} />
-        <Route path="inscription/entreprise" element={<RegisterCompany />} />
         <Route
           path="espace"
           element={
@@ -35,10 +34,9 @@ export default function App() {
           }
         />
         <Route path="profil" element={<RequireAuth><Profile /></RequireAuth>} />
-        <Route path="mes-offres" element={<RequireAuth><Matches /></RequireAuth>} />
+        <Route path="mes-offres" element={<RequireAuth role="CANDIDATE"><Matches /></RequireAuth>} />
         <Route path="admin/utilisateurs" element={<RequireAuth><AdminUsers /></RequireAuth>} />
         <Route path="admin/ecoles" element={<RequireAuth><AdminSchools /></RequireAuth>} />
-        <Route path="admin/entreprises" element={<RequireAuth><AdminCompanies /></RequireAuth>} />
         <Route path="admin/offres" element={<RequireAuth><AdminJobs /></RequireAuth>} />
         <Route path="admin/sites-carrieres" element={<RequireAuth><AdminCareerSites /></RequireAuth>} />
         <Route path="*" element={<NotFound />} />

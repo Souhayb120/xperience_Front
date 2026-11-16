@@ -48,7 +48,8 @@ export function useOfferQuery() {
   return { q, page, values, hasFilters, backendQuery: backend.toString(), update, goTo, clear: () => setParams({}) }
 }
 
-export function OffersHeader({ title, text, q, onSearch }) {
+// level: the title's heading (h1 on its own page, h2 when the page already has a title)
+export function OffersHeader({ title, text, q, onSearch, level: Heading = 'h1' }) {
   function submit(event) {
     event.preventDefault()
     onSearch(new FormData(event.currentTarget).get('q').trim())
@@ -56,7 +57,7 @@ export function OffersHeader({ title, text, q, onSearch }) {
 
   return (
     <section className="offers-hero">
-      <h1>{title}</h1>
+      <Heading>{title}</Heading>
       <p>{text}</p>
       {/* key={q}: the box shows the URL's search again after "Effacer les filtres" or the back button */}
       <form className="offers-search" role="search" onSubmit={submit} key={q}>

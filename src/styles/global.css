@@ -296,6 +296,22 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .count-chip { min-height: 44px; }
 }
 
+/* "Mes offres": the CV card, then the button, then the offers */
+.resume-card { display: grid; gap: 1rem; }
+.resume-file { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.resume-file > svg, .resume-empty > svg { color: var(--brand); flex: none; }
+.resume-file-name { flex: 1; min-width: 12rem; }
+.resume-file-name h2, .resume-empty h2 { font-size: var(--fs-lg); margin: 0; }
+.resume-file-name p { margin: 0.15rem 0 0; overflow-wrap: anywhere; }
+.resume-empty { display: grid; justify-items: center; gap: 0.5rem; padding: clamp(1.5rem, 4vw, 2.5rem) 1rem; text-align: center; border: 1.5px dashed var(--input-line); border-radius: var(--radius); }
+.resume-empty p { margin: 0 0 0.5rem; }
+.resume-empty.is-dragging { border-color: var(--brand); background: var(--brand-soft); }
+.resume-card .match-skills .link-btn { margin-left: 0.25rem; }
+.resume-card .alert { margin: 0; }
+.resume-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin-top: 1.25rem; }
+.resume-cta p { margin: 0; }
+.matches-results { margin-top: 2rem; }
+
 /* offers pages (components/Offers.jsx): dark header with the search, list on the left, filters on the right */
 .offers-hero { background: var(--dark); color: var(--dark-text); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.4rem, 4vw, 2.25rem); margin-bottom: 1.5rem; }
 .offers-hero h1 { font-size: var(--fs-2xl); color: inherit; margin: 0 0 0.4rem; }

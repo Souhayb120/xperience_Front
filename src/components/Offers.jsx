@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { api } from '../api/client'
 import { Briefcase, ChevronDown, MapPin, Search, X } from 'lucide-react'
 
 // The building blocks of the offers pages (public list, "Mes offres", school view).
@@ -126,9 +127,42 @@ export function ActiveFilters({ total, q, values, onChange, onClear }) {
   )
 }
 
-// offers = null while loading; each offer is { job } (later also score + matchingSkills)
-export function OfferList({ offers, error, hasFilters, onRetry, onClear }) {
-  const { search } = useLocation()
+// loads one page of offers + the filter counts for the current URL.
+// listPath = "/jobs" or "/me/matches"; the counts come from listPath + "/filters"
+export function useOffers(listPath, { backendQuery, page }, pageSize) {
+  const [result, setResult] = useState(null)
+  const [counts, setCounts] = useState(null)
+  const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)   // "Réessayer" bumps it to load again
+
+  useEffect(() => {
+    let current = true   // ignore an old answer that arrives after a newer request
+    setResult(null)
+    setError('')
+    const params = new URLSearchParams(backendQuery)
+    params.set('page', page)
+    params.set('size', pageSize)
+    api(`${listPath}?${params}`)
+      .then((data) => current && setResult(data))
+      .catch((e) => current && setError(e.message))
+    return () => { current = false }
+  }, [listPath, backendQuery, page, pageSize, attempt])
+
+  useEffect(() => {
+    let current = true
+    api(`${listPath}/filters?${backendQuery}`)
+      .then((data) => current && setCounts(data))
+      .catch(() => {})   // the list already shows the error; the filters keep their last counts
+    return () => { current = false }
+  }, [listPath, backendQuery, attempt])
+
+  return { result, counts, error, retry: () => setAttempt((n) => n + 1) }
+}
+
+// offers = null while loading; each offer is { job } or, on "Mes offres", { job, score, matchingSkills }.
+// empty = what to show when there is no offer and no filter (each page has its own message)
+export function OfferList({ offers, error, hasFilters, onRetry, onClear, empty = <p>Aucune offre pour le moment.</p> }) {
+  const { pathname, search } = useLocation()
 
   if (error) {
     return (
@@ -153,20 +187,21 @@ export function OfferList({ offers, error, hasFilters, onRetry, onClear }) {
   if (offers.length === 0) {
     return (
       <div className="card offers-state">
-        <p>{hasFilters ? 'Aucune offre ne correspond à ces filtres.' : 'Aucune offre pour le moment.'}</p>
+        {hasFilters ? <p>Aucune offre ne correspond à ces filtres.</p> : empty}
         {hasFilters && <button type="button" className="btn btn-ghost btn-sm" onClick={onClear}>Effacer les filtres</button>}
       </div>
     )
   }
   return (
     <ul className="card offer-list">
-      {offers.map(({ job }) => <OfferRow key={job.id} job={job} back={search} />)}
+      {offers.map((offer) => <OfferRow key={offer.job.id} {...offer} back={pathname + search} />)}
     </ul>
   )
 }
 
-// one offer on one line; the whole row opens the offer (the title link covers it)
-function OfferRow({ job, back }) {
+// one offer on one line; the whole row opens the offer (the title link covers it).
+// score + matchingSkills only on "Mes offres"
+function OfferRow({ job, score, matchingSkills = [], back }) {
   return (
     <li className="offer-row">
       <CompanyLogo company={job.company} />
@@ -177,8 +212,16 @@ function OfferRow({ job, back }) {
           {job.city && <span className="offer-place"><MapPin size={14} aria-hidden="true" />{job.city}</span>}
           {job.contractType && <span className="chip">{job.contractType}</span>}
         </p>
+        {matchingSkills.length > 0 && (
+          <p className="offer-skills">
+            Vos compétences : {matchingSkills.slice(0, 3).map((s) => <span key={s} className="chip chip-brand">{s}</span>)}
+          </p>
+        )}
       </div>
-      {job.postedAt && <time className="offer-date" dateTime={job.postedAt}>{relativeDate(job.postedAt)}</time>}
+      <div className="offer-side">
+        {score != null && <span className="score-badge" aria-label={`Correspondance ${score} %`}>{score} %</span>}
+        {job.postedAt && <time className="offer-date" dateTime={job.postedAt}>{relativeDate(job.postedAt)}</time>}
+      </div>
     </li>
   )
 }

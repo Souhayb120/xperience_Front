@@ -20,7 +20,7 @@ export default function JobDetail() {
   return (
     <div className="wrap page offer-detail">
       {/* back to the same list, with its filters and page */}
-      <Link to={`/offres${state?.back ?? ''}`} className="back-link"><ArrowLeft size={16} aria-hidden="true" /> Retour aux offres</Link>
+      <Link to={state?.back ?? '/offres'} className="back-link"><ArrowLeft size={16} aria-hidden="true" /> Retour aux offres</Link>
 
       {error && <p className="alert alert-error" role="alert">{error}</p>}
       {!job && !error && <p className="muted">Chargement…</p>}

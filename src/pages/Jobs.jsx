@@ -1,39 +1,11 @@
-import { useEffect, useState } from 'react'
-import { api } from '../api/client'
-import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery } from '../components/Offers'
+import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery, useOffers } from '../components/Offers'
 
 const PAGE_SIZE = 15
 
 // public list of offers: search + filters on the right, newest first. Everything is in the URL (see useOfferQuery).
 export default function Jobs() {
   const query = useOfferQuery()
-  const { backendQuery, page } = query
-
-  const [result, setResult] = useState(null)
-  const [counts, setCounts] = useState(null)
-  const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)   // "Réessayer" bumps it to load again
-
-  useEffect(() => {
-    let current = true   // ignore an old answer that arrives after a newer request
-    setResult(null)
-    setError('')
-    const params = new URLSearchParams(backendQuery)
-    params.set('page', page)
-    params.set('size', PAGE_SIZE)
-    api(`/jobs?${params}`)
-      .then((data) => current && setResult(data))
-      .catch((e) => current && setError(e.message))
-    return () => { current = false }
-  }, [backendQuery, page, attempt])
-
-  useEffect(() => {
-    let current = true
-    api(`/jobs/filters?${backendQuery}`)
-      .then((data) => current && setCounts(data))
-      .catch(() => {})   // the list already shows the error; the filters keep their last counts
-    return () => { current = false }
-  }, [backendQuery, attempt])
+  const { result, counts, error, retry } = useOffers('/jobs', query, PAGE_SIZE)
 
   return (
     <div className="wrap page">
@@ -59,10 +31,10 @@ export default function Jobs() {
             offers={result?.content.map((job) => ({ job }))}
             error={error}
             hasFilters={query.hasFilters}
-            onRetry={() => setAttempt((n) => n + 1)}
+            onRetry={retry}
             onClear={query.clear}
           />
-          <Pagination page={page} totalPages={result?.page.totalPages} onPage={query.goTo} />
+          <Pagination page={query.page} totalPages={result?.page.totalPages} onPage={query.goTo} />
         </div>
       </div>
     </div>

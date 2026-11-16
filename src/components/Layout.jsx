@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { BriefcaseBusiness, Building2, GraduationCap, House, List, Star, User } from 'lucide-react'
+import { BriefcaseBusiness, Building2, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
@@ -114,6 +114,7 @@ const SIDEBAR_LINKS = {
     { to: '/admin/ecoles', label: 'Écoles', icon: 'school' },
     { to: '/admin/entreprises', label: 'Entreprises', icon: 'building' },
     { to: '/admin/offres', label: 'Offres', icon: 'briefcase' },
+    { to: '/admin/sites-carrieres', label: 'Sites carrières', icon: 'globe' },
   ],
 }
 
@@ -145,7 +146,7 @@ function Sidebar({ user, onLogout }) {
 // sidebar icons from Lucide (one library, same stroke everywhere)
 const ICONS = {
   home: House, star: Star, user: User, list: List,
-  school: GraduationCap, building: Building2, briefcase: BriefcaseBusiness,
+  school: GraduationCap, building: Building2, briefcase: BriefcaseBusiness, globe: Globe,
 }
 
 function Icon({ name }) {

@@ -487,6 +487,8 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .side-link { min-height: 44px; }
 }
 
+.identifier-cell { max-width: 260px; overflow-wrap: anywhere; font-size: var(--fs-sm); color: var(--muted); }
+
 /* ---------- 10. motion ---------- */
 /* the hero enters once on load */
 

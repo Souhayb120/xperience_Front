@@ -10,7 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Matches from './pages/Matches'
 import NotFound from './pages/NotFound'
-import { AdminCompanies, AdminJobs, AdminSchools, AdminUsers } from './pages/AdminPages'
+import { AdminCareerSites, AdminCompanies, AdminJobs, AdminSchools, AdminUsers } from './pages/AdminPages'
 
 // every page, in one place (French URLs: the site is in French)
 export default function App() {
@@ -36,6 +36,7 @@ export default function App() {
         <Route path="admin/ecoles" element={<RequireAuth><AdminSchools /></RequireAuth>} />
         <Route path="admin/entreprises" element={<RequireAuth><AdminCompanies /></RequireAuth>} />
         <Route path="admin/offres" element={<RequireAuth><AdminJobs /></RequireAuth>} />
+        <Route path="admin/sites-carrieres" element={<RequireAuth><AdminCareerSites /></RequireAuth>} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

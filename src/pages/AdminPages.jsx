@@ -225,7 +225,7 @@ export function AdminCompanies() {
 }
 
 // ---------- offers ----------
-const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', 'emploi-public': 'Emploi public', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
+const SOURCE_NAMES = { dreamjob: 'Dreamjob.ma', 'emploi-public': 'Emploi public', carriere: 'Carrières entreprises', admin: 'Admin', company: 'Entreprise', seed: 'Exemple' }
 const SORTS = [
   ['date-desc', 'Plus récentes'],
   ['date-asc', 'Plus anciennes'],
@@ -234,7 +234,7 @@ const SORTS = [
 ]
 const PERIODS = [[1, "Aujourd'hui"], [7, '7 jours'], [15, '15 jours'], [30, '1 mois'], [60, '2 mois']]
 const MAX_DAYS = 62
-const IMPORT_SOURCES = ['dreamjob', 'emploi-public']   // the sources the admin can import from
+const IMPORT_SOURCES = ['dreamjob', 'emploi-public', 'carriere']   // the sources the admin can import from
 const isoDay = (date) => date.toISOString().slice(0, 10)
 
 export function AdminJobs() {
@@ -386,5 +386,125 @@ function ImportPanel({ source, onImported }) {
       {state.message && <p className="alert alert-info" role="status">{state.message}</p>}
       {state.error && <p className="alert alert-error" role="alert">{state.error}</p>}
     </section>
+  )
+}
+
+// ---------- company career sites ----------
+const ATS_NAMES = { SMARTRECRUITERS: 'SmartRecruiters', WORKABLE: 'Workable', JSONLD_PAGE: 'Page carrière' }
+const ATS_HINTS = {
+  SMARTRECRUITERS: "L'identifiant de l'entreprise dans l'adresse jobs.smartrecruiters.com/IDENTIFIANT",
+  WORKABLE: "Le compte dans l'adresse apply.workable.com/COMPTE",
+  JSONLD_PAGE: "L'adresse de la page qui liste les offres (https://...)",
+}
+const EMPTY_SITE = { companyName: '', ats: 'SMARTRECRUITERS', identifier: '' }
+
+export function AdminCareerSites() {
+  const [sites, setSites] = useState(null)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState(EMPTY_SITE)
+  const [errors, setErrors] = useState({})
+  const [showForm, setShowForm] = useState(false)
+  const [running, setRunning] = useState(null)
+  const [message, setMessage] = useState('')
+
+  const load = useCallback(() => { api('/admin/career-sources').then(setSites).catch((e) => setError(e.message)) }, [])
+  useEffect(() => { load() }, [load])
+
+  const update = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+
+  async function create(event) {
+    event.preventDefault()
+    setErrors({}); setError('')
+    try {
+      await api('/admin/career-sources', { method: 'POST', body: form })
+      setForm(EMPTY_SITE); setShowForm(false); load()
+    } catch (e) { setErrors(e.fields ?? {}); setError(e.message) }
+  }
+
+  async function toggle(site) {
+    try {
+      await api(`/admin/career-sources/${site.id}`, {
+        method: 'PUT', body: { companyName: site.companyName, ats: site.ats, identifier: site.identifier, active: !site.active },
+      })
+      load()
+    } catch (e) { setError(e.message) }
+  }
+
+  async function remove(site) {
+    if (!window.confirm(`Ne plus lire le site de ${site.companyName} ? Les offres déjà importées restent.`)) return
+    try { await api(`/admin/career-sources/${site.id}`, { method: 'DELETE' }); load() } catch (e) { setError(e.message) }
+  }
+
+  async function run(site) {
+    setRunning(site.id); setMessage(''); setError('')
+    try {
+      const { read, added } = await api(`/admin/career-sources/${site.id}/run?days=30`, { method: 'POST' })
+      setMessage(`${site.companyName} : ${added} nouvelle(s) offre(s) sur ${read} lue(s) (30 derniers jours).`)
+      load()
+    } catch (e) { setError(e.message) } finally { setRunning(null) }
+  }
+
+  return (
+    <div className="wrap page">
+      <div className="page-head">
+        <div>
+          <h1>Sites carrières</h1>
+          <p className="muted" style={{ margin: 0 }}>
+            Les sites carrières d'entreprises au Maroc que Xperience lit chaque jour. Vérifiez les conditions du site avant de l'ajouter.
+          </p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Fermer' : 'Ajouter un site'}
+        </button>
+      </div>
+      {error && <p className="alert alert-error" role="alert">{error}</p>}
+      {message && <p className="alert alert-info" role="status">{message}</p>}
+
+      {showForm && (
+        <form className="card form" onSubmit={create} noValidate style={{ marginBottom: '1.5rem' }}>
+          <div className="grid-2" style={{ alignItems: 'start', gap: '1rem' }}>
+            <Field label="Entreprise" name="companyName" value={form.companyName} onChange={update} error={errors.companyName} />
+            <div className="field">
+              <label htmlFor="ats">Type de site</label>
+              <select id="ats" className="select" name="ats" value={form.ats} onChange={update}>
+                {Object.entries(ATS_NAMES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+            </div>
+          </div>
+          <Field label="Identifiant" name="identifier" hint={ATS_HINTS[form.ats]} value={form.identifier}
+                 onChange={update} error={errors.identifier} />
+          <div><button className="btn btn-primary" type="submit">Ajouter le site</button></div>
+        </form>
+      )}
+
+      <div className="table-wrap card">
+        <table className="data-table">
+          <thead><tr><th>Entreprise</th><th>Type</th><th>Identifiant</th><th>Dernier import</th><th>Statut</th><th /></tr></thead>
+          <tbody>
+            {sites?.map((site) => (
+              <tr key={site.id}>
+                <td>{site.companyName}</td>
+                <td><span className="chip">{ATS_NAMES[site.ats]}</span></td>
+                <td className="identifier-cell">{site.identifier}</td>
+                <td>
+                  {site.lastRunAt
+                    ? <>{formatDate(site.lastRunAt)}<br /><small className="muted">{site.lastAdded ?? 0} offre(s) ajoutée(s)</small></>
+                    : <span className="muted">Jamais</span>}
+                </td>
+                <td><span className={`chip ${site.active ? 'chip-brand' : ''}`}>{site.active ? 'Actif' : 'En pause'}</span></td>
+                <td className="row" style={{ justifyContent: 'flex-end' }}>
+                  <button className="btn btn-primary btn-sm" onClick={() => run(site)} disabled={running !== null}>
+                    {running === site.id ? 'Import…' : 'Importer'}
+                  </button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => toggle(site)}>{site.active ? 'Mettre en pause' : 'Activer'}</button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => remove(site)}>Supprimer</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {sites?.length === 0 && <p className="empty">Aucun site carrière. Ajoutez le premier avec le bouton en haut.</p>}
+      </div>
+    </div>
   )
 }

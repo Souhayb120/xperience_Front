@@ -22,6 +22,7 @@ export default function App() {
         {/* the offers are for candidates only (the home page shows their counts) */}
         <Route path="offres" element={<RequireAuth role="CANDIDATE"><Jobs /></RequireAuth>} />
         <Route path="offres/:id" element={<RequireAuth role="CANDIDATE"><JobDetail /></RequireAuth>} />
+        <Route path="stages" element={<RequireAuth role="CANDIDATE"><Jobs internships /></RequireAuth>} />
         <Route path="metiers" element={<RequireAuth role="CANDIDATE"><Browse /></RequireAuth>} />
         <Route path="connexion" element={<Login />} />
         <Route path="inscription" element={<RegisterCandidate />} />

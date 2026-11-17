@@ -74,7 +74,7 @@ export function OffersHeader({ title, text, q, onSearch, level: Heading = 'h1' }
   )
 }
 
-export function FilterPanel({ counts, values, onChange }) {
+export function FilterPanel({ counts, values, onChange, hide = '' }) {
   // open on a computer, closed on a phone (the list comes first there)
   const [open, setOpen] = useState(() => window.matchMedia('(min-width: 861px)').matches)
 
@@ -85,7 +85,7 @@ export function FilterPanel({ counts, values, onChange }) {
       </button>
       {open && (
         <div className="filter-body">
-          {FILTERS.map((f) => (
+          {FILTERS.filter((f) => f.key !== hide).map((f) => (
             <div className="field" key={f.key}>
               <label htmlFor={`filter-${f.key}`}>{f.label}</label>
               <select

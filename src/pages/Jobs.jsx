@@ -2,22 +2,27 @@ import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOff
 
 const PAGE_SIZE = 15
 
-// public list of offers: search + filters on the right, newest first. Everything is in the URL (see useOfferQuery).
-export default function Jobs() {
+// list of offers: search + filters on the right, newest first. Everything is in the URL (see useOfferQuery).
+// internships = the "Stages" tab: the same list with the contract fixed to Stage (no contract filter there)
+export default function Jobs({ internships = false }) {
   const query = useOfferQuery()
-  const { result, counts, error, retry } = useOffers('/jobs', query, PAGE_SIZE)
+  const backendQuery = new URLSearchParams(query.backendQuery)
+  if (internships) backendQuery.set('contract', 'Stage')
+  const { result, counts, error, retry } = useOffers('/jobs', { ...query, backendQuery: backendQuery.toString() }, PAGE_SIZE)
 
   return (
     <div className="wrap page">
       <OffersHeader
-        title="Offres d'emploi en fonctions support"
-        text="RH, finance, juridique, achats, IT, marketing et qualité, partout au Maroc. Mises à jour chaque jour."
+        title={internships ? 'Stages en fonctions support' : "Offres d'emploi en fonctions support"}
+        text={internships
+          ? 'Stages, PFE et alternances en RH, finance, juridique, IT et marketing, partout au Maroc.'
+          : 'RH, finance, juridique, achats, IT, marketing et qualité, partout au Maroc. Mises à jour chaque jour.'}
         q={query.q}
         onSearch={(q) => query.update({ q })}
       />
 
       <div className="offers-layout">
-        <FilterPanel counts={counts} values={query.values} onChange={query.update} />
+        <FilterPanel counts={counts} values={query.values} onChange={query.update} hide={internships ? 'contrat' : ''} />
 
         <div className="offers-results">
           <ActiveFilters

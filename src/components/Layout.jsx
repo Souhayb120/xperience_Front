@@ -83,6 +83,7 @@ export default function Layout() {
                 {user.role === 'CANDIDATE' && (
                   <>
                     <NavLink to="/offres" className="nav-page">Offres</NavLink>
+                    <NavLink to="/stages" className="nav-page">Stages</NavLink>
                     <NavLink to="/metiers" className="nav-page">Métiers</NavLink>
                     <NavLink to="/mes-offres" className="nav-page">Mes offres</NavLink>
                   </>
@@ -144,7 +145,7 @@ function LogoutDialog({ onYes, onNo }) {
   )
 }
 
-const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/offres', '/metiers', '/admin']
+const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/offres', '/stages', '/metiers', '/admin']
 
 // links by role: each one says where it goes; short = the label of the phone tab bar
 const SIDEBAR_LINKS = {
@@ -152,6 +153,7 @@ const SIDEBAR_LINKS = {
     { to: '/espace', label: 'Mon espace', short: 'Accueil', icon: 'home' },
     { to: '/mes-offres', label: 'Mes offres', short: 'Mes offres', icon: 'star' },
     { to: '/offres', label: 'Toutes les offres', short: 'Offres', icon: 'list' },
+    { to: '/stages', label: 'Stages', short: 'Stages', icon: 'school' },
     { to: '/metiers', label: 'Métiers', short: 'Métiers', icon: 'briefcase' },
     { to: '/profil', label: 'Mon profil et mon CV', short: 'Profil', icon: 'user' },
   ],

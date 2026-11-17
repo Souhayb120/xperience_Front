@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { BriefcaseBusiness, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -14,8 +14,31 @@ export default function Layout() {
   // the logged-in pages get the sidebar
   const inApp = Boolean(user) && APP_PAGES.some((page) => location.pathname.startsWith(page))
 
+  const headerRef = useRef(null)
+  const toggleRef = useRef(null)
+
   // close the phone menu after each page change
   useEffect(() => setMenuOpen(false), [location.pathname])
+
+  // while the phone menu is open: Escape closes it (focus back on the Menu button), a tap outside the header too
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    function onKey(event) {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        toggleRef.current?.focus()
+      }
+    }
+    function onPointer(event) {
+      if (!headerRef.current?.contains(event.target)) setMenuOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onPointer)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onPointer)
+    }
+  }, [menuOpen])
 
   function handleLogout() {
     logout()
@@ -26,7 +49,7 @@ export default function Layout() {
     <>
       <a className="skip-link" href="#contenu">Aller au contenu</a>
 
-      <header className="site-header">
+      <header ref={headerRef} className={`site-header${menuOpen ? ' menu-open' : ''}`}>
         <div className="wrap">
           <Link to={user ? '/espace' : '/'} className="logo" aria-label={user ? 'Xperience, mon espace' : 'Xperience, accueil'}>
             <Logo />
@@ -35,6 +58,7 @@ export default function Layout() {
           <ThemeToggle />
 
           <button
+            ref={toggleRef}
             type="button"
             className="btn btn-ghost btn-sm menu-toggle"
             aria-expanded={menuOpen}

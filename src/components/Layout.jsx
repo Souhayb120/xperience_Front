@@ -74,13 +74,14 @@ export default function Layout() {
                 {/* the offers are for candidates only */}
                 {user.role === 'CANDIDATE' && (
                   <>
-                    <NavLink to="/offres">Offres</NavLink>
-                    <NavLink to="/metiers">Métiers</NavLink>
-                    <NavLink to="/mes-offres">Mes offres</NavLink>
+                    <NavLink to="/offres" className="nav-page">Offres</NavLink>
+                    <NavLink to="/metiers" className="nav-page">Métiers</NavLink>
+                    <NavLink to="/mes-offres" className="nav-page">Mes offres</NavLink>
                   </>
                 )}
-                <NavLink to="/espace">Mon espace</NavLink>
-                <button type="button" className="btn btn-ghost btn-sm" onClick={handleLogout}>
+                <NavLink to="/espace" className="nav-page">Mon espace</NavLink>
+                {/* on phones the page links live in the bottom tab bar: the menu only keeps this (red) button */}
+                <button type="button" className="btn btn-ghost btn-sm nav-logout" onClick={handleLogout}>
                   Se déconnecter
                 </button>
               </>
@@ -105,14 +106,11 @@ export default function Layout() {
         )}
       </main>
 
-      <footer className="site-footer">
+      {/* one short line, always at the bottom of the screen; on logged-in phone pages the tab bar replaces it */}
+      <footer className={`site-footer${inApp ? ' in-app' : ''}`}>
         <div className="wrap">
-          <span>© {new Date().getFullYear()} Xperience, les fonctions support au Maroc</span>
-          <span className="photo-credit">Photos : Unsplash</span>
-          <nav aria-label="Liens du pied de page">
-            <Link to="/inscription">Créer un compte candidat</Link>
-            <Link to="/connexion">Se connecter</Link>
-          </nav>
+          {/* the account links are in the header (Menu on phones): no duplicate here */}
+          <span>© {new Date().getFullYear()} Xperience · Photos Unsplash</span>
         </div>
       </footer>
     </>

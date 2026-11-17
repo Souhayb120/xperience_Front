@@ -230,16 +230,23 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .nav.open a.active:not(.btn) { background: var(--brand-soft); }
   .nav.open a:focus-visible { outline: 3px solid var(--ring); outline-offset: -2px; }
   .nav.open .btn { width: 100%; margin-top: 0.3rem; }
+  /* logged in: the page links are in the bottom tab bar, the menu only keeps the red logout button */
+  .nav.open a.nav-page:not(.btn) { display: none; }   /* beats ".nav.open a:not(.btn)" above */
+  .nav.open .nav-logout { margin-top: 0; background: var(--danger); border-color: transparent; color: #fff; }
+  .nav.open .nav-logout:hover { background: color-mix(in srgb, var(--danger) 85%, #000); }
+  :root[data-theme="dark"] .nav.open .nav-logout { color: #2a0b08; }
   /* browsers without blur: a solid card, never see-through text */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .nav.open { background: var(--surface); }
   }
 }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } }
-.site-footer { background: transparent; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); padding: 1rem 0; color: var(--muted); font-size: 0.8rem; }
-.site-footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.site-footer nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-.site-footer a { color: var(--muted); }
+/* the footer stays at the bottom of the screen on short pages: the page is a column, the main part grows */
+#root { min-height: 100svh; display: flex; flex-direction: column; }
+#contenu { flex: 1 0 auto; display: flex; flex-direction: column; }
+#contenu > * { flex-shrink: 0; }
+.site-footer { background: transparent; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); padding: 0.55rem 0; color: var(--muted); font-size: 0.78rem; }
+.site-footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 0.25rem 1rem; flex-wrap: wrap; }
 
 /* ---------- 8. landing sections (one idea per screen) ---------- */
 .screen { min-height: calc(100svh - var(--header-h)); display: flex; align-items: center; padding: clamp(2.5rem, 7vh, 4.5rem) 0; }
@@ -281,7 +288,7 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 .page { padding: clamp(1.5rem, 4vh, 2.5rem) 0 3rem; }
 .page-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
 .page-head h1 { font-size: var(--fs-xl); margin: 0; }
-.auth-page { min-height: calc(100svh - var(--header-h)); display: grid; place-items: center; padding: 2.5rem 0; }
+.auth-page { flex: 1 0 auto; display: grid; place-items: center; padding: 2.5rem 0; }
 .auth-card { width: min(100% - 2 * var(--gutter), 420px); }
 .auth-card h1 { font-size: var(--fs-xl); }
 .filters { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
@@ -431,7 +438,7 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 .photo-credit { font-size: 0.75rem; }
 
 /* ---------- login / sign-up: photo + animation left, form right ---------- */
-.auth-split { display: grid; grid-template-columns: 1.1fr 1fr; min-height: calc(100svh - var(--header-h)); }
+.auth-split { flex: 1 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; }
 .auth-visual {
   position: relative; overflow: hidden; display: flex;
   padding: 2.25rem clamp(1.25rem, 4vw, 3rem); color: var(--dark-text); background: var(--dark);
@@ -489,10 +496,11 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 }
 
 /* ---------- sidebar (logged-in pages) ---------- */
-.app-shell { display: grid; grid-template-columns: 224px 1fr; min-height: calc(100svh - var(--header-h)); }
+.app-shell { flex: 1 0 auto; display: grid; grid-template-columns: 224px 1fr; }
 .app-main { min-width: 0; }
 .sidebar {
-  position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h));
+  /* leaves room for the one-line footer (2.5rem), so a short page needs no scrolling */
+  position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h) - 2.5rem);
   display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
   padding: 1.1rem 0.75rem; background: var(--surface); border-right: 1px solid var(--line);
 }
@@ -526,6 +534,7 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .side-label-short { display: inline; }
   .side-user { display: none; }
   .sidebar-single { display: none; }
+  .site-footer.in-app { display: none; }
   .app-shell:has(.sidebar-single) .app-main { padding-bottom: 0; }
 }
 
@@ -629,7 +638,6 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .btn { min-height: 44px; }
   .btn-sm { min-height: 40px; }
   .input, .select, .textarea, .offers-search input { font-size: 16px; }
-  .site-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
   .hero-actions .link, .landing-browse-head .link { display: inline-flex; align-items: center; min-height: 44px; }
 }
 

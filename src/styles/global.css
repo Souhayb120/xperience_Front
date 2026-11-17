@@ -209,10 +209,12 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 @media (max-width: 760px) {
   .menu-toggle { display: inline-flex; }
   .nav { display: none; }
+  /* absolute + explicit height: the header's blur (backdrop-filter) would shrink a position: fixed menu to the
+     header's own 58 px, leaving the links over the page with no background */
   .nav.open {
     display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem;
-    position: fixed; inset: var(--header-h) 0 0 0; padding: 1.5rem var(--gutter);
-    background: var(--bg);
+    position: absolute; top: 100%; left: 0; right: 0; height: calc(100dvh - var(--header-h)); overflow-y: auto;
+    padding: 1.5rem var(--gutter); background: var(--bg); border-top: 1px solid var(--line);
   }
   .nav.open a { font-size: 1.15rem; padding: 0.6rem 0; }
   .nav.open .btn { width: 100%; }

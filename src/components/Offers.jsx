@@ -64,7 +64,11 @@ export function OffersHeader({ title, text, q, onSearch, level: Heading = 'h1' }
         <Search size={18} aria-hidden="true" />
         <label htmlFor="offers-q" className="visually-hidden">Rechercher une offre</label>
         <input id="offers-q" name="q" type="search" defaultValue={q} placeholder="Poste, entreprise, mot-clé" />
-        <button className="btn btn-primary" type="submit">Rechercher</button>
+        {/* on phones only the icon shows (more room for the text); the name stays "Rechercher" */}
+        <button className="btn btn-primary offers-search-btn" type="submit" aria-label="Rechercher">
+          <Search size={18} aria-hidden="true" className="offers-search-btn-icon" />
+          <span className="offers-search-btn-label">Rechercher</span>
+        </button>
       </form>
     </section>
   )

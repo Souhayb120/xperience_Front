@@ -97,37 +97,41 @@ export default function Layout() {
 
 const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/offres', '/metiers', '/admin']
 
-// links by role: each one says where it goes
+// links by role: each one says where it goes; short = the label of the phone tab bar
 const SIDEBAR_LINKS = {
   CANDIDATE: [
-    { to: '/espace', label: 'Mon espace', icon: 'home' },
-    { to: '/mes-offres', label: 'Mes offres', icon: 'star' },
-    { to: '/profil', label: 'Mon profil et mon CV', icon: 'user' },
-    { to: '/offres', label: 'Toutes les offres', icon: 'list' },
-    { to: '/metiers', label: 'Métiers', icon: 'briefcase' },
+    { to: '/espace', label: 'Mon espace', short: 'Accueil', icon: 'home' },
+    { to: '/mes-offres', label: 'Mes offres', short: 'Mes offres', icon: 'star' },
+    { to: '/offres', label: 'Toutes les offres', short: 'Offres', icon: 'list' },
+    { to: '/metiers', label: 'Métiers', short: 'Métiers', icon: 'briefcase' },
+    { to: '/profil', label: 'Mon profil et mon CV', short: 'Profil', icon: 'user' },
   ],
   SCHOOL: [
-    { to: '/espace', label: 'Code et étudiants', icon: 'home' },
+    { to: '/espace', label: 'Code et étudiants', short: 'Étudiants', icon: 'home' },
   ],
   ADMIN: [
-    { to: '/espace', label: 'Tableau de bord', icon: 'home' },
-    { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: 'user' },
-    { to: '/admin/ecoles', label: 'Écoles', icon: 'school' },
-    { to: '/admin/offres', label: 'Offres', icon: 'briefcase' },
-    { to: '/admin/sites-carrieres', label: 'Sites carrières', icon: 'globe' },
+    { to: '/espace', label: 'Tableau de bord', short: 'Tableau', icon: 'home' },
+    { to: '/admin/utilisateurs', label: 'Utilisateurs', short: 'Comptes', icon: 'user' },
+    { to: '/admin/ecoles', label: 'Écoles', short: 'Écoles', icon: 'school' },
+    { to: '/admin/offres', label: 'Offres', short: 'Offres', icon: 'briefcase' },
+    { to: '/admin/sites-carrieres', label: 'Sites carrières', short: 'Sites', icon: 'globe' },
   ],
 }
 
 const ROLE_NAMES = { CANDIDATE: 'Candidat', SCHOOL: 'École', ADMIN: 'Administrateur' }
 
 function Sidebar({ user, onLogout }) {
+  const links = SIDEBAR_LINKS[user.role] ?? []
+  // a phone tab bar with a single tab is useless: hidden there (sidebar-single)
   return (
-    <aside className="sidebar" aria-label="Menu de mon espace">
+    <aside className={`sidebar${links.length < 2 ? ' sidebar-single' : ''}`} aria-label="Menu de mon espace">
       <nav className="side-nav">
-        {(SIDEBAR_LINKS[user.role] ?? []).map((link) => (
+        {links.map((link) => (
           <NavLink key={link.to} to={link.to} end className="side-link">
             <Icon name={link.icon} />
-            {link.label}
+            {/* only one of the two labels is displayed (display: none hides the other from screen readers too) */}
+            <span className="side-label">{link.label}</span>
+            <span className="side-label-short">{link.short}</span>
           </NavLink>
         ))}
       </nav>

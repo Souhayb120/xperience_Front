@@ -8,6 +8,7 @@ import { useAuth } from '../auth/AuthContext'
 export default function Layout() {
   const { user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [askLogout, setAskLogout] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -40,7 +41,14 @@ export default function Layout() {
     }
   }, [menuOpen])
 
+  // both logout buttons (header menu, sidebar) ask first
   function handleLogout() {
+    setMenuOpen(false)
+    setAskLogout(true)
+  }
+
+  function confirmLogout() {
+    setAskLogout(false)
     logout()
     navigate('/')
   }
@@ -113,7 +121,26 @@ export default function Layout() {
           <span>© {new Date().getFullYear()} Xperience · Photos Unsplash</span>
         </div>
       </footer>
+
+      {askLogout && <LogoutDialog onYes={confirmLogout} onNo={() => setAskLogout(false)} />}
     </>
+  )
+}
+
+// native <dialog>: showModal() gives the backdrop, focus trap and Escape (= Non) for free
+function LogoutDialog({ onYes, onNo }) {
+  const ref = useRef(null)
+  useEffect(() => { ref.current?.showModal() }, [])
+  return (
+    <dialog ref={ref} className="confirm-dialog" aria-labelledby="logout-title" onClose={onNo}
+            onClick={(event) => { if (event.target === ref.current) onNo() }}>
+      <h2 id="logout-title">Se déconnecter ?</h2>
+      <p className="muted">Voulez-vous vraiment vous déconnecter de votre compte ?</p>
+      <div className="confirm-actions">
+        <button type="button" className="btn btn-ghost" onClick={onNo} autoFocus>Non</button>
+        <button type="button" className="btn btn-danger" onClick={onYes}>Oui, me déconnecter</button>
+      </div>
+    </dialog>
   )
 }
 

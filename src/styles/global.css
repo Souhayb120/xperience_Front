@@ -677,3 +677,14 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* logout confirmation (native <dialog>) */
+.confirm-dialog {
+  width: min(92vw, 380px); padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card); color: var(--ink); box-shadow: var(--shadow-up);
+}
+.confirm-dialog::backdrop { background: rgb(3 27 25 / 0.45); backdrop-filter: blur(3px); }
+.confirm-dialog h2 { margin: 0 0 0.4rem; font-size: var(--fs-lg); }
+.confirm-dialog p { margin: 0 0 1.25rem; }
+.confirm-actions { display: flex; gap: 0.6rem; justify-content: flex-end; flex-wrap: wrap; }
+@media (max-width: 560px) { .confirm-actions .btn { flex: 1; } }

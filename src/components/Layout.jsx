@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom'
 import { BriefcaseBusiness, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { onLoading } from '../api/client'
 
 // header + page + footer, shared by every page
 export default function Layout() {
@@ -56,6 +57,7 @@ export default function Layout() {
   return (
     <>
       <a className="skip-link" href="#contenu">Aller au contenu</a>
+      <TopLoader />
 
       <header ref={headerRef} className={`site-header${menuOpen ? ' menu-open' : ''}`}>
         <div className="wrap">
@@ -108,10 +110,10 @@ export default function Layout() {
         {inApp ? (
           <div className="app-shell">
             <Sidebar user={user} onLogout={handleLogout} />
-            <div className="app-main"><Outlet /></div>
+            <div className="app-main"><div key={location.pathname} className="page-enter"><Outlet /></div></div>
           </div>
         ) : (
-          <Outlet />
+          <div key={location.pathname} className="page-enter"><Outlet /></div>
         )}
       </main>
 
@@ -143,6 +145,13 @@ function LogoutDialog({ onYes, onNo }) {
       </div>
     </dialog>
   )
+}
+
+// thin bar at the top while the server answers (the lists show their own skeletons)
+function TopLoader() {
+  const [loading, setLoading] = useState(false)
+  useEffect(() => onLoading(setLoading), [])
+  return <div className="top-loader" data-active={loading} aria-hidden="true" />
 }
 
 const APP_PAGES = ['/espace', '/profil', '/mes-offres', '/offres', '/stages', '/metiers', '/admin']

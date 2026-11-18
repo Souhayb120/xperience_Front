@@ -19,7 +19,28 @@ export class ApiError extends Error {
   }
 }
 
-export async function api(path, { method = 'GET', body } = {}) {
+// how many requests are running: the top loading bar (Layout) listens to it
+let pending = 0
+const loadingListeners = new Set()
+export function onLoading(listener) {
+  loadingListeners.add(listener)
+  return () => loadingListeners.delete(listener)
+}
+function track(change) {
+  pending += change
+  loadingListeners.forEach((listener) => listener(pending > 0))
+}
+
+export async function api(path, options) {
+  track(1)
+  try {
+    return await request(path, options)
+  } finally {
+    track(-1)
+  }
+}
+
+async function request(path, { method = 'GET', body } = {}) {
   const headers = { Accept: 'application/json' }
   const isForm = body instanceof FormData
   if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json'

@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import Field from '../components/Field'
 import { PageSkeleton } from '../components/Skeleton'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 // the candidate edits their profile and uploads their CV (PDF)
 export default function Profile() {
@@ -15,6 +16,7 @@ export default function Profile() {
   const [message, setMessage] = useState(null)   // { type: 'ok' | 'error', text }
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [confirming, setConfirming] = useState(false)
 
   function fill(profile) {
     setForm({
@@ -83,6 +85,16 @@ export default function Profile() {
     }
   }
 
+  async function removeResume() {
+    setMessage(null)
+    try {
+      fill(await api('/me/resume', { method: 'DELETE' }))
+      setMessage({ type: 'ok', text: 'CV supprimé.' })
+    } catch (e) {
+      setMessage({ type: 'error', text: e.message })
+    }
+  }
+
   if (!form) {
     return message ? <p className="wrap page alert alert-error" role="alert">{message.text}</p> : <PageSkeleton lines={5} />
   }
@@ -110,6 +122,17 @@ export default function Profile() {
             <input type="file" accept="application/pdf,.pdf" onChange={upload} disabled={uploading}
                    className="visually-hidden" />
           </label>
+          {resume && (
+            <button type="button" className="btn btn-ghost" onClick={() => setConfirming(true)} disabled={uploading}>
+              Supprimer mon CV
+            </button>
+          )}
+          {confirming && (
+            <ConfirmDialog title="Supprimer votre CV ?"
+                           text="Votre CV et les compétences trouvées dedans seront supprimés. Vous pourrez en ajouter un autre."
+                           yesLabel="Oui, supprimer"
+                           onYes={() => { setConfirming(false); void removeResume() }} onNo={() => setConfirming(false)} />
+          )}
         </section>
 
         <form className="card form" onSubmit={save} noValidate aria-labelledby="infos-title">

@@ -4,6 +4,7 @@ import { FileText, FileUp } from 'lucide-react'
 import { api } from '../api/client'
 import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery, useOffers } from '../components/Offers'
 import { PageSkeleton } from '../components/Skeleton'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 const PAGE_SIZE = 15
 const MAX_RESUME_BYTES = 5 * 1024 * 1024
@@ -62,7 +63,7 @@ export default function Matches() {
         </div>
       )}
 
-      {shown && <MatchResults key={version} />}
+      {shown && canMatch && <MatchResults key={version} />}
     </div>
   )
 }
@@ -72,6 +73,7 @@ function ResumeCard({ profile, onUploaded }) {
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState(null)
   const [dragging, setDragging] = useState(false)
+  const [confirming, setConfirming] = useState(false)
 
   async function upload(file) {
     if (!file) return
@@ -97,6 +99,16 @@ function ResumeCard({ profile, onUploaded }) {
       setMessage({ type: 'error', text: e.message })
     } finally {
       setUploading(false)
+    }
+  }
+
+  async function remove() {
+    setMessage(null)
+    try {
+      onUploaded(await api('/me/resume', { method: 'DELETE' }))
+      setMessage({ type: 'ok', text: 'CV supprimé.' })
+    } catch (e) {
+      setMessage({ type: 'error', text: e.message })
     }
   }
 
@@ -126,6 +138,9 @@ function ResumeCard({ profile, onUploaded }) {
             <p className="muted">{profile.resumeFileName}</p>
           </div>
           {picker}
+          <button type="button" className="btn btn-ghost" onClick={() => setConfirming(true)} disabled={uploading}>
+            Supprimer mon CV
+          </button>
         </div>
       ) : (
         <div className={`resume-empty${dragging ? ' is-dragging' : ''}`}>
@@ -146,6 +161,12 @@ function ResumeCard({ profile, onUploaded }) {
 
       {message && (
         <p className={`alert ${message.type === 'ok' ? 'alert-info' : 'alert-error'}`} role="status">{message.text}</p>
+      )}
+      {confirming && (
+        <ConfirmDialog title="Supprimer votre CV ?"
+                       text="Votre CV et les compétences trouvées dedans seront supprimés. Vous pourrez en ajouter un autre."
+                       yesLabel="Oui, supprimer"
+                       onYes={() => { setConfirming(false); void remove() }} onNo={() => setConfirming(false)} />
       )}
     </section>
   )

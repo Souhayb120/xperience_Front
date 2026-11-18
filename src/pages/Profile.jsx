@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import Field from '../components/Field'
+import { PageSkeleton } from '../components/Skeleton'
 
 // the candidate edits their profile and uploads their CV (PDF)
 export default function Profile() {
@@ -83,7 +84,7 @@ export default function Profile() {
   }
 
   if (!form) {
-    return <p className="wrap page muted">{message?.text ?? 'Chargement…'}</p>
+    return message ? <p className="wrap page alert alert-error" role="alert">{message.text}</p> : <PageSkeleton lines={5} />
   }
 
   return (

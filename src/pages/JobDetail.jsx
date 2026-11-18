@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft, MapPin } from 'lucide-react'
 import { api } from '../api/client'
 import { CompanyLogo } from '../components/Offers'
+import { SkeletonCard } from '../components/Skeleton'
 
 // one offer, opened from the list. Candidates apply outside the app: the offer's link, or by email.
 export default function JobDetail() {
@@ -23,7 +24,7 @@ export default function JobDetail() {
       <Link to={state?.back ?? '/offres'} className="back-link"><ArrowLeft size={16} aria-hidden="true" /> Retour aux offres</Link>
 
       {error && <p className="alert alert-error" role="alert">{error}</p>}
-      {!job && !error && <p className="muted">Chargement…</p>}
+      {!job && !error && <div role="status" aria-busy="true"><span className="visually-hidden">Chargement…</span><SkeletonCard logo lines={6} /></div>}
 
       {job && (
         <article className="card offer-detail-card">

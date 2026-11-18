@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import BarChartCard, { DonutChartCard } from '../components/BarChartCard'
+import { SkeletonGrid, SkeletonLines } from '../components/Skeleton'
 
 // "Mon espace": one home per role
 export default function Dashboard() {
@@ -45,7 +46,7 @@ function useLoad(path) {
 function Loading({ error }) {
   return error
     ? <p className="alert alert-error" role="alert">{error}</p>
-    : <p className="muted">Chargement…</p>
+    : <SkeletonGrid />
 }
 
 // ---------- candidate ----------
@@ -169,7 +170,7 @@ function SchoolStudents() {
             )}
             {open === student.id && (
               <div className="stack">
-                {!matches[student.id] && <p className="muted">Chargement…</p>}
+                {!matches[student.id] && <div role="status" aria-busy="true"><span className="visually-hidden">Chargement…</span><SkeletonLines count={3} /></div>}
                 {matches[student.id]?.length === 0 && <p className="muted">Aucune offre ne correspond encore à son profil.</p>}
                 {matches[student.id]?.map(({ job, score }) => (
                   <div key={job.id} className="mini-offer">

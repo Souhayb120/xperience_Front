@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { FileText, FileUp } from 'lucide-react'
 import { api } from '../api/client'
 import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery, useOffers } from '../components/Offers'
+import { PageSkeleton } from '../components/Skeleton'
 
 const PAGE_SIZE = 15
 const MAX_RESUME_BYTES = 5 * 1024 * 1024
@@ -31,9 +32,9 @@ export default function Matches() {
 
   if (!profile) {
     return (
-      <div className="wrap page">
-        {error ? <p className="alert alert-error" role="alert">{error}</p> : <p className="muted">Chargement…</p>}
-      </div>
+      error
+        ? <div className="wrap page"><p className="alert alert-error" role="alert">{error}</p></div>
+        : <PageSkeleton cards={1} lines={4} />
     )
   }
 

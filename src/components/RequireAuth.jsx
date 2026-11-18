@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
+import { PageSkeleton } from './Skeleton'
 
 // only for logged-in users; the others go to the login page and come back after (same page, same filters).
 // role="CANDIDATE": a page for one role only; the other roles go back to their own space
@@ -8,7 +9,7 @@ export default function RequireAuth({ children, role }) {
   const location = useLocation()
 
   if (loading) {
-    return <p className="wrap page muted">Chargement…</p>
+    return <PageSkeleton />
   }
   if (!user) {
     return <Navigate to="/connexion" replace state={{ from: location.pathname + location.search }} />

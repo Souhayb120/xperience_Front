@@ -182,7 +182,7 @@ function MatchResults() {
             hasFilters={query.hasFilters}
             onRetry={retry}
             onClear={query.clear}
-            empty={<p>Aucune offre ne correspond encore à votre CV. Ajoutez des compétences dans votre profil.</p>}
+            empty={<p>Aucune offre ne correspond encore à votre CV. Essayez un CV plus détaillé, ou revenez demain : de nouvelles offres arrivent chaque jour.</p>}
           />
           <Pagination page={query.page} totalPages={result?.page.totalPages} onPage={query.goTo} />
         </div>

@@ -21,7 +21,6 @@ export default function Profile() {
       phoneNumber: profile.phoneNumber ?? '',
       city: profile.city ?? '',
       yearsExperience: profile.yearsExperience ?? '',
-      skills: profile.skills.join(', '),
       schoolCode: '',
     })
     setSchool(profile.school)
@@ -45,7 +44,6 @@ export default function Profile() {
         phoneNumber: form.phoneNumber,
         city: form.city,
         yearsExperience: form.yearsExperience === '' ? null : Number(form.yearsExperience),
-        skills: form.skills.split(',').map((s) => s.trim()).filter(Boolean),
       }
       // the school code is only sent when typed (empty = keep the current school)
       if (form.schoolCode.trim()) body.schoolCode = form.schoolCode.trim()
@@ -74,11 +72,8 @@ export default function Profile() {
     try {
       const data = new FormData()
       data.append('file', file)
-      const before = form.skills.split(',').filter(Boolean).length
-      const profile = await api('/me/resume', { method: 'POST', body: data })
-      fill(profile)
-      const found = profile.skills.length - before
-      setMessage({ type: 'ok', text: `CV ajouté. ${found > 0 ? `${found} compétence(s) trouvée(s) et ajoutée(s).` : 'Aucune nouvelle compétence trouvée.'}` })
+      fill(await api('/me/resume', { method: 'POST', body: data }))
+      setMessage({ type: 'ok', text: 'CV ajouté. Vos offres sont classées selon ce CV.' })
     } catch (e) {
       setMessage({ type: 'error', text: e.message })
     } finally {
@@ -106,7 +101,7 @@ export default function Profile() {
         <section className="card stack" aria-labelledby="cv-title">
           <h2 id="cv-title" style={{ fontSize: 'var(--fs-xl)' }}>Mon CV</h2>
           <p className="muted">
-            Ajoutez votre CV en PDF (5 Mo maximum). Xperience y trouve vos compétences et les ajoute à votre profil.
+            Ajoutez votre CV en PDF (5 Mo maximum). Xperience le compare aux offres pour vous montrer les plus proches.
           </p>
           {resume && <p><span className="chip chip-brand">{resume}</span></p>}
           <label className="btn btn-primary" style={{ cursor: uploading ? 'wait' : 'pointer' }}>
@@ -123,8 +118,6 @@ export default function Profile() {
           <Field label="Ville" name="city" placeholder="Casablanca" value={form.city} onChange={update} error={errors.city} />
           <Field label="Années d'expérience" name="yearsExperience" type="number" min="0" max="50"
                  value={form.yearsExperience} onChange={update} error={errors.yearsExperience} />
-          <Field label="Compétences" name="skills" as="textarea" hint="Séparées par des virgules : paie, SIRH, Excel…"
-                 value={form.skills} onChange={update} error={errors.skills} />
 
           {school ? (
             <p className="notice">

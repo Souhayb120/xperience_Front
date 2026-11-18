@@ -446,6 +446,8 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .hero-visual { padding-left: 0; }
   .hero-float { position: static; width: 100%; margin-top: -3rem; }
   .photo-tall { aspect-ratio: 4 / 3; }
+  /* the 4:3 crop keeps only half of the tall photo: aim at the face, not the middle */
+  .photo-tall img { object-position: 50% 20%; }
 }
 .photo-credit { font-size: 0.75rem; }
 

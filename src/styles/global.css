@@ -230,15 +230,22 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
   .nav.open a.active:not(.btn) { background: var(--brand-soft); }
   .nav.open a:focus-visible { outline: 3px solid var(--ring); outline-offset: -2px; }
   .nav.open .btn { width: 100%; margin-top: 0.3rem; }
-  /* logged in: the page links are in the bottom tab bar, the menu only keeps the red logout button */
-  .nav.open a.nav-page:not(.btn) { display: none; }   /* beats ".nav.open a:not(.btn)" above */
-  .nav.open .nav-logout { margin-top: 0; background: var(--danger); border-color: transparent; color: #fff; }
-  .nav.open .nav-logout:hover { background: color-mix(in srgb, var(--danger) 85%, #000); }
-  :root[data-theme="dark"] .nav.open .nav-logout { color: #2a0b08; }
+  /* logged in: the page links are in the bottom tab bar, so no Menu: the logout button sits in the header */
+  .nav.nav-user { display: flex; }
+  .nav-user .nav-page { display: none; }
   /* browsers without blur: a solid card, never see-through text */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .nav.open { background: var(--surface); }
   }
+}
+/* phones: the header logout is an icon only (the text stays for screen readers) */
+@media (max-width: 760px) {
+  .nav-logout { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .nav-logout-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+/* wide screens: the sidebar already has "Se déconnecter", no second one in the header */
+@media (min-width: 861px) {
+  .nav-in-app .nav-logout { display: none; }
 }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } }
 /* the footer stays at the bottom of the screen on short pages: the page is a column, the main part grows */
@@ -694,9 +701,10 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 
 /* logout confirmation (native <dialog>) */
 .confirm-dialog {
-  width: min(92vw, 380px); padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius);
+  width: min(92vw, 380px); padding: 0; border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--card); color: var(--ink); box-shadow: var(--shadow-up);
 }
+.confirm-box { padding: 1.5rem; }
 .confirm-dialog::backdrop { background: rgb(3 27 25 / 0.45); backdrop-filter: blur(3px); }
 .confirm-dialog h2 { margin: 0 0 0.4rem; font-size: var(--fs-lg); }
 .confirm-dialog p { margin: 0 0 1.25rem; }

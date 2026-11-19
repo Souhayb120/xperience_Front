@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { BriefcaseBusiness, Globe, GraduationCap, House, List, Star, User } from 'lucide-react'
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { BriefcaseBusiness, Globe, GraduationCap, House, List, LogOut, Star, User } from 'lucide-react'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { onLoading } from '../api/client'
 
@@ -11,7 +11,6 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [askLogout, setAskLogout] = useState(false)
   const location = useLocation()
-  const navigate = useNavigate()
 
   // the logged-in pages get the sidebar
   const inApp = Boolean(user) && APP_PAGES.some((page) => location.pathname.startsWith(page))
@@ -48,10 +47,11 @@ export default function Layout() {
     setAskLogout(true)
   }
 
+  // a full load of the home page: React Router's navigate() is a transition, so the protected page would first
+  // re-render without a user and send it to /connexion; a reload also clears everything kept from the session
   function confirmLogout() {
-    setAskLogout(false)
     logout()
-    navigate('/')
+    window.location.assign('/')
   }
 
   return (
@@ -67,18 +67,21 @@ export default function Layout() {
 
           <ThemeToggle />
 
-          <button
-            ref={toggleRef}
-            type="button"
-            className="btn btn-ghost btn-sm menu-toggle"
-            aria-expanded={menuOpen}
-            aria-controls="menu"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? 'Fermer' : 'Menu'}
-          </button>
+          {/* phones: only visitors need a Menu; logged in, the nav below only shows the logout button */}
+          {!user && (
+            <button
+              ref={toggleRef}
+              type="button"
+              className="btn btn-ghost btn-sm menu-toggle"
+              aria-expanded={menuOpen}
+              aria-controls="menu"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? 'Fermer' : 'Menu'}
+            </button>
+          )}
 
-          <nav id="menu" className={`nav${menuOpen ? ' open' : ''}`} aria-label="Navigation principale">
+          <nav id="menu" className={`nav${user ? ' nav-user' : ''}${inApp ? ' nav-in-app' : ''}${menuOpen ? ' open' : ''}`} aria-label="Navigation principale">
             {user ? (
               <>
                 {/* the offers are for candidates only */}
@@ -91,9 +94,10 @@ export default function Layout() {
                   </>
                 )}
                 <NavLink to="/espace" className="nav-page">Mon espace</NavLink>
-                {/* on phones the page links live in the bottom tab bar: the menu only keeps this (red) button */}
+                {/* on phones the page links live in the bottom tab bar: the header only keeps this button */}
                 <button type="button" className="btn btn-ghost btn-sm nav-logout" onClick={handleLogout}>
-                  Se déconnecter
+                  <LogOut size={18} aria-hidden="true" />
+                  <span className="nav-logout-text">Se déconnecter</span>
                 </button>
               </>
             ) : (
@@ -130,18 +134,23 @@ export default function Layout() {
   )
 }
 
-// native <dialog>: showModal() gives the backdrop, focus trap and Escape (= Non) for free
+// native <dialog>: showModal() gives the backdrop, focus trap and Escape (= Non) for free.
+// "Non" closes it with close(), so the browser puts the focus back on the button that opened it.
 function LogoutDialog({ onYes, onNo }) {
   const ref = useRef(null)
   useEffect(() => { ref.current?.showModal() }, [])
+  const cancel = () => ref.current?.close()
   return (
+    // the padding is on the inner box: a click on the dialog element itself can only be on the backdrop
     <dialog ref={ref} className="confirm-dialog" aria-labelledby="logout-title" onClose={onNo}
-            onClick={(event) => { if (event.target === ref.current) onNo() }}>
-      <h2 id="logout-title">Se déconnecter ?</h2>
-      <p className="muted">Voulez-vous vraiment vous déconnecter de votre compte ?</p>
-      <div className="confirm-actions">
-        <button type="button" className="btn btn-ghost" onClick={onNo} autoFocus>Non</button>
-        <button type="button" className="btn btn-danger" onClick={onYes}>Oui, me déconnecter</button>
+            onClick={(event) => { if (event.target === ref.current) cancel() }}>
+      <div className="confirm-box">
+        <h2 id="logout-title">Se déconnecter ?</h2>
+        <p className="muted">Voulez-vous vraiment vous déconnecter de votre compte ?</p>
+        <div className="confirm-actions">
+          <button type="button" className="btn btn-ghost" onClick={cancel} autoFocus>Non</button>
+          <button type="button" className="btn btn-danger" onClick={onYes}>Oui, me déconnecter</button>
+        </div>
       </div>
     </dialog>
   )

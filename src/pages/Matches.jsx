@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { ActiveFilters, FilterPanel, OfferList, OffersHeader, Pagination, useOfferQuery, useOffers } from '../components/Offers'
 import { PageSkeleton } from '../components/Skeleton'
 import ConfirmDialog from '../components/ConfirmDialog'
+import { markMatchesSeen } from '../components/NotificationBell'
 
 const PAGE_SIZE = 15
 const MAX_RESUME_BYTES = 5 * 1024 * 1024
@@ -175,6 +176,11 @@ function ResumeCard({ profile, onUploaded }) {
 function MatchResults() {
   const query = useOfferQuery()
   const { result, counts, error, retry } = useOffers('/me/matches', query, PAGE_SIZE)
+
+  // the candidate is looking at their matches: the bell's new offers are seen
+  useEffect(() => {
+    markMatchesSeen().catch(() => {})   // only the bell number depends on it
+  }, [])
 
   return (
     <section className="matches-results" aria-label="Offres pour mon CV">

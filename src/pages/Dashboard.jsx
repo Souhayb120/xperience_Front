@@ -50,37 +50,123 @@ function Loading({ error }) {
 }
 
 // ---------- candidate ----------
+// the numbers of the candidate's matching offers (GET /api/me/matches/dashboard) + their profile
 function CandidateHome() {
   const { data: profile, error } = useLoad('/me/profile')
   if (!profile) return <Loading error={error} />
+  if (!profile.hasResume) {
+    return (
+      <div className="dash-grid">
+        <section className="card stack" aria-labelledby="cv-title">
+          <h2 id="cv-title" style={{ fontSize: 'var(--fs-xl)' }}>Ajoutez votre CV</h2>
+          <p className="muted">Xperience lit vos compétences dans votre CV, puis vous montre ici vos statistiques et les nouvelles offres qui vous correspondent.</p>
+          <div><Link to="/mes-offres" className="btn btn-primary">Ajouter mon CV</Link></div>
+        </section>
+        <ProfileCard profile={profile} />
+      </div>
+    )
+  }
+  return <CandidateStats profile={profile} />
+}
 
+function CandidateStats({ profile }) {
+  const { data: stats, error } = useLoad('/me/matches/dashboard')
+  if (!stats) return <Loading error={error} />
+
+  if (stats.totalMatches === 0) {
+    return (
+      <div className="dash-grid">
+        <section className="card stack" aria-labelledby="none-title">
+          <h2 id="none-title" style={{ fontSize: 'var(--fs-xl)' }}>Pas encore d'offre pour votre CV</h2>
+          <p className="muted">De nouvelles offres arrivent chaque jour : la cloche en haut vous prévient dès qu'une offre vous correspond.</p>
+          <div><Link to="/offres" className="btn btn-ghost">Voir toutes les offres</Link></div>
+        </section>
+        <ProfileCard profile={profile} />
+      </div>
+    )
+  }
+
+  const tiles = [
+    { label: 'Offres pour votre CV', value: stats.totalMatches },
+    { label: 'Forte correspondance (70 % et +)', value: stats.strongMatches },
+    { label: 'Score moyen', value: `${stats.averageScore} %` },
+    { label: 'Meilleur score', value: `${stats.bestScore} %` },
+  ]
   return (
-    <div className="dash-grid">
-      <section className="card stack" aria-labelledby="profil-title">
-        <h2 id="profil-title" style={{ fontSize: 'var(--fs-xl)' }}>Mon profil</h2>
-        <dl className="kv">
-          <dt>Ville</dt><dd>{profile.city ?? 'À compléter'}</dd>
-          <dt>Expérience</dt><dd>{profile.yearsExperience != null ? `${profile.yearsExperience} an(s)` : 'À compléter'}</dd>
-          <dt>École</dt><dd>{profile.school ? `${profile.school.name} (${profile.school.city})` : 'Aucune'}</dd>
-        </dl>
-        <div className="row">
-          {profile.skills.length > 0
-            ? profile.skills.map((skill) => <span key={skill} className="chip chip-brand">{skill}</span>)
-            : <span className="muted">Aucune compétence ajoutée.</span>}
-        </div>
-      </section>
+    <div className="stack" style={{ gap: '1.5rem' }}>
+      {stats.newMatches.count > 0 && <NewMatchesCard news={stats.newMatches} />}
 
-      <section className="card stack" aria-labelledby="offres-title">
-        <h2 id="offres-title" style={{ fontSize: 'var(--fs-xl)' }}>Les offres</h2>
-        <p className="muted">
-          {profile.hasResume ? 'Vos offres sont classées selon votre CV et vos compétences.' : 'Ajoutez votre CV pour voir les offres qui vous correspondent.'}
-        </p>
-        <div className="row">
-          <Link to="/mes-offres" className="btn btn-primary">Voir mes offres</Link>
-          <Link to="/profil" className="btn btn-ghost">{profile.hasResume ? 'Modifier mon profil' : 'Ajouter mon CV'}</Link>
-        </div>
-      </section>
+      <ul className="stat-tiles" aria-label="Vos chiffres">
+        {tiles.map(({ label, value }) => (
+          <li key={label} className="card stat-tile">
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="grid-2" style={{ alignItems: 'start', gap: '1.5rem' }}>
+        <BarChartCard title="Vos offres par score" data={stats.scoreBands} />
+        <DonutChartCard title="Vos offres par fonction" data={stats.byCategory} />
+      </div>
+
+      <div className="grid-2" style={{ alignItems: 'start', gap: '1.5rem' }}>
+        <BarChartCard title="Vos offres par ville" data={stats.byCity} />
+        <section className="card stack" aria-labelledby="top-title">
+          <h2 id="top-title" style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>Vos meilleures offres</h2>
+          {stats.topMatches.map(({ job, score }) => <OfferLink key={job.id} job={job} score={score} />)}
+          <div><Link to="/mes-offres" className="btn btn-primary btn-sm">Voir toutes mes offres</Link></div>
+          <p className="muted" style={{ margin: 0, fontSize: 'var(--fs-sm)' }}>Le score est indicatif, pas une garantie de recrutement.</p>
+        </section>
+      </div>
+
+      <ProfileCard profile={profile} />
     </div>
+  )
+}
+
+// the offers related to the CV that arrived since the candidate last looked (same list as the bell)
+function NewMatchesCard({ news }) {
+  return (
+    <section className="card stack new-matches" aria-labelledby="new-title">
+      <h2 id="new-title" style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>
+        {news.count === 1
+          ? 'Une nouvelle offre correspond à votre CV'
+          : `${news.count} nouvelles offres correspondent à votre CV`}
+      </h2>
+      <p className="muted" style={{ margin: 0 }}>Vous ne les avez pas encore vues.</p>
+      {news.offers.map(({ job, score }) => <OfferLink key={job.id} job={job} score={score} />)}
+      <div><Link to="/mes-offres" className="btn btn-primary btn-sm">Voir mes offres</Link></div>
+    </section>
+  )
+}
+
+function OfferLink({ job, score }) {
+  return (
+    <Link to={`/offres/${job.id}`} className="mini-offer">
+      <strong>{job.title}</strong>
+      <small>{[job.company, job.city, job.contractType].filter(Boolean).join(', ')}</small>
+      <span className="score">{score} %</span>
+    </Link>
+  )
+}
+
+function ProfileCard({ profile }) {
+  return (
+    <section className="card stack" aria-labelledby="profil-title">
+      <h2 id="profil-title" style={{ fontSize: 'var(--fs-lg)', margin: 0 }}>Mon profil</h2>
+      <dl className="kv">
+        <dt>Ville</dt><dd>{profile.city ?? 'À compléter'}</dd>
+        <dt>Expérience</dt><dd>{profile.yearsExperience != null ? `${profile.yearsExperience} an(s)` : 'À compléter'}</dd>
+        <dt>École</dt><dd>{profile.school ? `${profile.school.name} (${profile.school.city})` : 'Aucune'}</dd>
+      </dl>
+      <div className="row">
+        {profile.skills.length > 0
+          ? profile.skills.map((skill) => <span key={skill} className="chip chip-brand">{skill}</span>)
+          : <span className="muted">Aucune compétence trouvée dans votre CV.</span>}
+      </div>
+      <div><Link to="/profil" className="btn btn-ghost btn-sm">Modifier mon profil</Link></div>
+    </section>
   )
 }
 

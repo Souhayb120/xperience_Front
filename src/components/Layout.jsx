@@ -4,6 +4,7 @@ import { BriefcaseBusiness, Globe, GraduationCap, House, List, LogOut, Star, Use
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { onLoading } from '../api/client'
+import NotificationBell from './NotificationBell'
 
 // header + page + footer, shared by every page
 export default function Layout() {
@@ -66,6 +67,7 @@ export default function Layout() {
           </Link>
 
           <ThemeToggle />
+          {user?.role === 'CANDIDATE' && <NotificationBell />}
 
           {/* phones: only visitors need a Menu; logged in, the nav below only shows the logout button */}
           {!user && (

@@ -732,14 +732,16 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 
 /* logout confirmation (native <dialog>) */
 .confirm-dialog {
-  width: min(92vw, 380px); padding: 0; border: 1px solid var(--line); border-radius: var(--radius);
+  width: min(calc(100vw - 2 * var(--gutter)), 320px); padding: 0; border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--card); color: var(--ink); box-shadow: var(--shadow-up);
 }
-.confirm-box { padding: 1.5rem; }
+.confirm-box { padding: 1.1rem 1.25rem; }
 .confirm-dialog::backdrop { background: rgb(3 27 25 / 0.45); backdrop-filter: blur(3px); }
-.confirm-dialog h2 { margin: 0 0 0.4rem; font-size: var(--fs-lg); }
-.confirm-dialog p { margin: 0 0 1.25rem; }
-.confirm-actions { display: flex; gap: 0.6rem; justify-content: flex-end; flex-wrap: wrap; }
+.confirm-dialog h2 { margin: 0 0 0.3rem; font-size: var(--fs-lg); }
+.confirm-dialog p { margin: 0 0 1rem; font-size: var(--fs-sm); }
+.confirm-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+/* compact buttons that stay on one line ("Oui, me déconnecter"), still 40 px tall for a thumb */
+.confirm-actions .btn { min-height: 40px; padding: 0.4rem 0.9rem; font-size: var(--fs-sm); white-space: nowrap; }
 @media (max-width: 560px) { .confirm-actions .btn { flex: 1; } }
 
 /* loading bar at the top (requests running) + a short fade when a new page opens */

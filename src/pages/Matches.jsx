@@ -90,11 +90,10 @@ function ResumeCard({ profile, onUploaded }) {
     try {
       const data = new FormData()
       data.append('file', file)
-      const before = profile.skills.length
       const updated = await api('/me/resume', { method: 'POST', body: data })
-      const found = updated.skills.length - before
+      const found = updated.skills.length
       onUploaded(updated)
-      setMessage({ type: 'ok', text: `CV ajouté. ${found > 0 ? `${found} compétence(s) trouvée(s).` : 'Aucune nouvelle compétence trouvée.'}` })
+      setMessage({ type: 'ok', text: `CV ajouté. ${found > 0 ? `${found} compétence(s) trouvée(s).` : 'Aucune compétence précise trouvée : vos offres seront classées sur le texte du CV.'}` })
     } catch (e) {
       setMessage({ type: 'error', text: e.message })
     } finally {

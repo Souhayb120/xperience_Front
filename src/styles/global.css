@@ -566,6 +566,37 @@ a.card:hover, .card-link:hover { border-color: var(--brand); }
 .data-table td { padding: 0.55rem 0.85rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .data-table tr:last-child td { border-bottom: 0; }
 .data-table tbody tr:hover { background: var(--bg); }
+.data-table .chip, .data-table .btn { white-space: nowrap; }   /* "SmartRecruiters", "Actif", "Mettre en pause" never break inside */
+.data-table td.cell-actions .row { flex-wrap: nowrap; }   /* wide screens: the row buttons stay on one line */
+/* phones: each row of a .cards-on-phone table becomes a small card (first cell = title, then "label  value" lines, buttons at the bottom).
+   The header row is only hidden visually, so screen readers still get the column names. */
+@media (max-width: 640px) {
+  .table-wrap:has(> .cards-on-phone) { background: none; border: 0; box-shadow: none; border-radius: 0; overflow: visible; }
+  .cards-on-phone thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .cards-on-phone, .cards-on-phone tbody, .cards-on-phone tr, .cards-on-phone td { display: block; width: 100%; }
+  .cards-on-phone tbody { display: grid; gap: 0.75rem; }
+  .cards-on-phone tr {
+    display: grid; gap: 0.45rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--card);
+  }
+  .cards-on-phone tbody tr:hover { background: var(--card); }
+  .cards-on-phone td {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0; border: 0;
+    text-align: right; min-width: 0; overflow-wrap: anywhere;
+  }
+  .cards-on-phone td::before { content: attr(data-label); flex: none; color: var(--muted); font-weight: 600; text-align: left; }
+  .cards-on-phone td:first-child { display: block; text-align: left; font-size: 1rem; font-weight: 700; color: var(--ink); }
+  .cards-on-phone td:first-child::before { content: none; }
+  .cards-on-phone td.cell-actions { display: block; padding-top: 0.6rem; margin-top: 0.15rem; border-top: 1px solid var(--line); }
+  .cards-on-phone td.cell-actions:empty { display: none; }
+  .cards-on-phone td.cell-actions::before { content: none; }
+  .cards-on-phone td.cell-actions .row, .cards-on-phone td.cell-actions:has(> .btn) { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  /* the buttons share each line evenly (44 px tall: easy to tap), no lonely button pushed to the right */
+  .cards-on-phone td.cell-actions .btn { flex: 1 1 auto; min-height: 44px; }
+  .cards-on-phone td.identifier-cell { max-width: none; }   /* the career site URL can use the whole card width */
+  /* the other tables (users) stay tables: one line per row, swipe sideways inside the table */
+  .data-table:not(.cards-on-phone) td { white-space: nowrap; }
+}
 .code { font-family: ui-monospace, Consolas, monospace; font-weight: 700; letter-spacing: 0.1em; color: var(--brand); }
 
 /* ---------- admin charts ---------- */

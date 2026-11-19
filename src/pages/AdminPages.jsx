@@ -55,12 +55,12 @@ export function AdminUsers() {
           <tbody>
             {result?.content.map((user) => (
               <tr key={user.id}>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>{user.phoneNumber}</td>
-                <td><span className="chip">{ROLE_NAMES[user.role]}</span></td>
-                <td>{formatDate(user.createdAt)}</td>
-                <td>
+                <td data-label="Nom">{user.fullName}</td>
+                <td data-label="Email">{user.email}</td>
+                <td data-label="Téléphone">{user.phoneNumber}</td>
+                <td data-label="Rôle"><span className="chip">{ROLE_NAMES[user.role]}</span></td>
+                <td data-label="Inscrit le">{formatDate(user.createdAt)}</td>
+                <td className="cell-actions">
                   {/* schools are deleted from their own page (with their data) */}
                   {user.role === 'CANDIDATE' && (
                     <button className="btn btn-ghost btn-sm" onClick={() => remove(user)}>Supprimer</button>
@@ -137,18 +137,20 @@ export function AdminSchools() {
       )}
 
       <div className="table-wrap card">
-        <table className="data-table">
+        <table className="data-table cards-on-phone">
           <thead><tr><th>École</th><th>Ville</th><th>Code</th><th>Contact</th><th /></tr></thead>
           <tbody>
             {result?.content.map((school) => (
               <tr key={school.id}>
-                <td>{school.name}</td>
-                <td>{school.city}</td>
-                <td><code className="code">{school.code}</code></td>
-                <td>{school.contactName}<br /><small className="muted">{school.email}</small></td>
-                <td className="row" style={{ justifyContent: 'flex-end' }}>
-                  <button className="btn btn-ghost btn-sm" onClick={() => newCode(school)}>Nouveau code</button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => remove(school)}>Supprimer</button>
+                <td data-label="École">{school.name}</td>
+                <td data-label="Ville">{school.city}</td>
+                <td data-label="Code"><code className="code">{school.code}</code></td>
+                <td data-label="Contact"><span>{school.contactName}<br /><small className="muted">{school.email}</small></span></td>
+                <td className="cell-actions">
+                  <div className="row" style={{ justifyContent: 'flex-end' }}>
+                    <button className="btn btn-ghost btn-sm" onClick={() => newCode(school)}>Nouveau code</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => remove(school)}>Supprimer</button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -241,20 +243,22 @@ export function AdminJobs() {
 
       {error && <p className="alert alert-error" role="alert">{error}</p>}
       <div className="table-wrap card">
-        <table className="data-table">
+        <table className="data-table cards-on-phone">
           <thead><tr><th>Offre</th><th>Ville</th><th>Fonction</th><th>Source</th><th>Publiée le</th><th /></tr></thead>
           <tbody>
             {result?.content.map((job) => (
               <tr key={job.id}>
-                <td>
-                  {job.url ? <a href={job.url} target="_blank" rel="noopener noreferrer">{job.title}</a> : job.title}
-                  {job.company && <><br /><small className="muted">{job.company}</small></>}
+                <td data-label="Offre">
+                  <span>
+                    {job.url ? <a href={job.url} target="_blank" rel="noopener noreferrer">{job.title}</a> : job.title}
+                    {job.company && <><br /><small className="muted">{job.company}</small></>}
+                  </span>
                 </td>
-                <td>{job.city ?? <span className="muted">n.c.</span>}</td>
-                <td>{job.category ?? <span className="muted">n.c.</span>}</td>
-                <td><span className="chip">{SOURCE_NAMES[job.source] ?? job.source}</span></td>
-                <td>{job.postedAt ? new Date(job.postedAt).toLocaleDateString('fr-MA') : <span className="muted">n.c.</span>}</td>
-                <td><button className="btn btn-ghost btn-sm" onClick={() => remove(job)}>Supprimer</button></td>
+                <td data-label="Ville">{job.city ?? <span className="muted">n.c.</span>}</td>
+                <td data-label="Fonction">{job.category ?? <span className="muted">n.c.</span>}</td>
+                <td data-label="Source"><span className="chip">{SOURCE_NAMES[job.source] ?? job.source}</span></td>
+                <td data-label="Publiée le">{job.postedAt ? new Date(job.postedAt).toLocaleDateString('fr-MA') : <span className="muted">n.c.</span>}</td>
+                <td className="cell-actions"><button className="btn btn-ghost btn-sm" onClick={() => remove(job)}>Supprimer</button></td>
               </tr>
             ))}
           </tbody>
@@ -415,26 +419,28 @@ export function AdminCareerSites() {
       )}
 
       <div className="table-wrap card">
-        <table className="data-table">
+        <table className="data-table cards-on-phone">
           <thead><tr><th>Entreprise</th><th>Type</th><th>Identifiant</th><th>Dernier import</th><th>Statut</th><th /></tr></thead>
           <tbody>
             {sites?.map((site) => (
               <tr key={site.id}>
-                <td>{site.companyName}</td>
-                <td><span className="chip">{ATS_NAMES[site.ats]}</span></td>
-                <td className="identifier-cell">{site.identifier}</td>
-                <td>
+                <td data-label="Entreprise">{site.companyName}</td>
+                <td data-label="Type"><span className="chip">{ATS_NAMES[site.ats]}</span></td>
+                <td data-label="Identifiant" className="identifier-cell">{site.identifier}</td>
+                <td data-label="Dernier import">
                   {site.lastRunAt
-                    ? <>{formatDate(site.lastRunAt)}<br /><small className="muted">{site.lastAdded ?? 0} offre(s) ajoutée(s)</small></>
+                    ? <span>{formatDate(site.lastRunAt)}<br /><small className="muted">{site.lastAdded ?? 0} offre(s) ajoutée(s)</small></span>
                     : <span className="muted">Jamais</span>}
                 </td>
-                <td><span className={`chip ${site.active ? 'chip-brand' : ''}`}>{site.active ? 'Actif' : 'En pause'}</span></td>
-                <td className="row" style={{ justifyContent: 'flex-end' }}>
-                  <button className="btn btn-primary btn-sm" onClick={() => run(site)} disabled={running !== null}>
-                    {running === site.id ? 'Import…' : 'Importer'}
-                  </button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => toggle(site)}>{site.active ? 'Mettre en pause' : 'Activer'}</button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => remove(site)}>Supprimer</button>
+                <td data-label="Statut"><span className={`chip ${site.active ? 'chip-brand' : ''}`}>{site.active ? 'Actif' : 'En pause'}</span></td>
+                <td className="cell-actions">
+                  <div className="row" style={{ justifyContent: 'flex-end' }}>
+                    <button className="btn btn-primary btn-sm" onClick={() => run(site)} disabled={running !== null}>
+                      {running === site.id ? 'Import…' : 'Importer'}
+                    </button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => toggle(site)}>{site.active ? 'Mettre en pause' : 'Activer'}</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => remove(site)}>Supprimer</button>
+                  </div>
                 </td>
               </tr>
             ))}

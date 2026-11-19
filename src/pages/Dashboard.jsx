@@ -367,17 +367,17 @@ function AdminStats() {
           <p className="empty">Aucun candidat inscrit pour le moment.</p>
         ) : (
           <div className="table-wrap card">
-            <table className="data-table">
+            <table className="data-table cards-on-phone">
               <thead><tr><th>Nom</th><th>Email</th><th>Ville</th><th>École</th><th>CV</th><th>Inscrit le</th></tr></thead>
               <tbody>
                 {stats.latestCandidates.map((c) => (
                   <tr key={c.id}>
-                    <td>{c.fullName}</td>
-                    <td>{c.email}</td>
-                    <td>{c.city ?? <span className="muted">n.c.</span>}</td>
-                    <td>{c.schoolName ?? <span className="muted">n.c.</span>}</td>
-                    <td><span className={`chip ${c.hasResume ? 'chip-brand' : ''}`}>{c.hasResume ? 'Oui' : 'Non'}</span></td>
-                    <td>{new Date(c.createdAt).toLocaleDateString('fr-MA')}</td>
+                    <td data-label="Nom">{c.fullName}</td>
+                    <td data-label="Email">{c.email}</td>
+                    <td data-label="Ville">{c.city ?? <span className="muted">n.c.</span>}</td>
+                    <td data-label="École">{c.schoolName ?? <span className="muted">n.c.</span>}</td>
+                    <td data-label="CV"><span className={`chip ${c.hasResume ? 'chip-brand' : ''}`}>{c.hasResume ? 'Oui' : 'Non'}</span></td>
+                    <td data-label="Inscrit le">{new Date(c.createdAt).toLocaleDateString('fr-MA')}</td>
                   </tr>
                 ))}
               </tbody>
